@@ -13,3 +13,6 @@ ldconfig
 make
 
 4、进入ClientForPython，生成.so文件
+
+
+大家如果有问题或者好的想法，欢迎加入群：291368579
