@@ -110,7 +110,7 @@ static PyMethodDef FDFSMethods[] = {
 	{ "fdfs_init", wrap_fdfs_init, METH_VARARGS, "Execute a shell command." },  
 	{ "fdfs_download", wrap_fdfs_download, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_upload", wrap_fdfs_upload, METH_VARARGS, "Execute a shell command." }, 
-    { "fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command." }, 
+    	{ "fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_delete", wrap_fdfs_delete, METH_VARARGS, "Execute a shell command." }, 
 	
 	{ "list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS, "Execute a shell command." }, 
