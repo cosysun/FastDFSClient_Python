@@ -1,4 +1,4 @@
-#ifndef MY_FDFS_CLIENT_H
+ï»¿#ifndef MY_FDFS_CLIENT_H
 #define MY_FDFS_CLIENT_H
 
 #include "fdfs_client.h"
@@ -18,26 +18,31 @@ public:
 
 public:
 	
-	// ³õÊ¼»¯¿Í»§¶Ë
+	// åˆå§‹åŒ–å®¢æˆ·ç«¯
 	int init(const char* sFDFSConfig, int nLogLevel);
 
-	// ÏÂÔØÎÄ¼ş
+	// ä¸‹è½½æ–‡ä»¶
 	int fdfs_dowloadfile(BufferInfo* pBuff, const char *group_name, const char* remote_filename);
 	
-	// ÉÏ´«
+	// ä¸Šä¼ 
 	int fdfs_uploadfile( const char *file_content, const char *file_ext_name, int file_size, 
 		int& name_size, char*& remote_file_name);
+    
+    // slaveä¸Šä¼ 
+    int fdfs_slave_uploadfile( const char *file_content, const char *master_filename,
+                               const char *prefix_name, const char *file_ext_name, 
+                               int file_size, int& name_size, char*& remote_file_name );
 
-	// É¾³ı
+	// åˆ é™¤
 	int fdfs_deletefile(const char *group_name, const char* remote_filename);
 
-	// ËùÓĞ×éĞÅÏ¢
+	// æ‰€æœ‰ç»„ä¿¡æ¯
 	int list_all_groups(BufferInfo* group_info);
 
-	// Ö¸¶¨×éĞÅÏ¢
+	// æŒ‡å®šç»„ä¿¡æ¯
 	int list_one_group(const char* group_name, BufferInfo *group_info);
 
-	// storageĞÅÏ¢
+	// storageä¿¡æ¯
 	int list_storages(const char* group_name, 
 		const char* storage_id, 
 		BufferInfo* storages_info);

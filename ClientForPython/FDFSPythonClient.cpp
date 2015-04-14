@@ -1,6 +1,6 @@
-#include "FDFSPythonClient.h"
+ï»¿#include "FDFSPythonClient.h"
 
-//////////////////////////python Óë C++ ½Ó¿Ú////////////////////////////////////////////////
+//////////////////////////python ä¸Ž C++ æŽ¥å£////////////////////////////////////////////////
 static PyObject * wrap_fdfs_init(PyObject *self, PyObject *args) 
 {  
 	const char* sConfig;
@@ -41,6 +41,24 @@ static PyObject * wrap_fdfs_upload(PyObject *self, PyObject *args)
 	int nNameSize = 0;
 	char* pRemoteFileName;
 	int res = fdfs_upload(sFileContent, sFileExtName, nFileSize, nNameSize, pRemoteFileName); 
+    return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
+} 
+
+static PyObject * wrap_fdfs_slave_upload(PyObject *self, PyObject *args) 
+{  
+	const char* sFileContent;
+	const char* sFileExtName;
+    const char* sMasterFileName;
+    const char* sPrefixName;
+	int nFileSize = 0;
+	if (!PyArg_ParseTuple(args, "s#sss",  &sFileContent, &nFileSize, &sFileExtName, \
+                          &sMasterFileName, &sPrefixName)) 
+		return NULL;  
+
+	int nNameSize = 0;
+	char* pRemoteFileName;
+	int res = fdfs_slave_upload(sFileContent, sMasterFileName, sPrefixName, \
+                                sFileExtName, nFileSize, nNameSize, pRemoteFileName); 
     return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
 } 
 
@@ -85,13 +103,14 @@ static PyObject * wrap_list_storages(PyObject *self, PyObject *args)
 	return Py_BuildValue("(i,s#)", res, StoragesInfo.buff, StoragesInfo.length);
 } 
 
-// ·½·¨ÁÐ±í  
+// æ–¹æ³•åˆ—è¡¨  
 static PyMethodDef FDFSMethods[] = {  
 
-	//pythonÖÐ×¢²áµÄº¯ÊýÃû
+	//pythonä¸­æ³¨å†Œçš„å‡½æ•°å
 	{ "fdfs_init", wrap_fdfs_init, METH_VARARGS, "Execute a shell command." },  
 	{ "fdfs_download", wrap_fdfs_download, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_upload", wrap_fdfs_upload, METH_VARARGS, "Execute a shell command." }, 
+    { "fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_delete", wrap_fdfs_delete, METH_VARARGS, "Execute a shell command." }, 
 	
 	{ "list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS, "Execute a shell command." }, 
@@ -101,16 +120,16 @@ static PyMethodDef FDFSMethods[] = {
 };  
 
 
-// Ä£¿é³õÊ¼»¯·½·¨  
+// æ¨¡å—åˆå§‹åŒ–æ–¹æ³•  
 PyMODINIT_FUNC initFDFSPythonClient(void) {  
 
-	//³õÊ¼Ä£¿é
+	//åˆå§‹æ¨¡å—
 	PyObject *m = Py_InitModule("FDFSPythonClient", FDFSMethods);  
 	if (m == NULL)  
 		return;  
 }  
 
-///////////////////////////½Ó¿ÚÊµÏÖ///////////////////////////////////////////////
+///////////////////////////æŽ¥å£å®žçŽ°///////////////////////////////////////////////
 CFDFSClient * g_pClient = NULL;
 
 int fdfs_init(const char* sConfig, int nLogLevel)
@@ -156,6 +175,25 @@ int fdfs_upload(const char *file_content, const char *file_ext_name, int file_si
 
 	int result = 0;
 	result= g_pClient->fdfs_uploadfile(file_content, file_ext_name, file_size, name_size, remote_file_name);
+
+	return result;  
+}
+
+int fdfs_slave_upload( const char *file_content, const char *master_filename,
+                       const char *prefix_name, const char *file_ext_name, int file_size, 
+                       int& name_size, char*& remote_file_name )
+{
+	if (file_content == NULL || file_size == 0)
+	{
+		printf("tt:%d", file_size);
+        return FSC_ERROR_CODE_PARAM_INVAILD;
+	}
+
+	if(g_pClient == NULL) return FSC_ERROR_CODE_INIT_FAILED;
+
+	int result = 0;
+	result= g_pClient->fdfs_slave_uploadfile(file_content, master_filename, \
+    prefix_name, file_ext_name, file_size, name_size, remote_file_name);
 
 	return result;  
 }

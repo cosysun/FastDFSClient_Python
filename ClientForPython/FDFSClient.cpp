@@ -1,4 +1,4 @@
-#include "FDFSClient.h"
+ï»¿#include "FDFSClient.h"
 #include "FDFSPythonClient.h"
 #include "json/json.h"
 
@@ -30,14 +30,14 @@ CFDFSClient::~CFDFSClient(void)
 
 int CFDFSClient::init( const char* sFDFSConfig, int nLogLevel)
 {
-	// ³õÊ¼»¯ÈÕÖ¾
+	// åˆå§‹åŒ–æ—¥å¿—
     log_init(); 
     g_log_context.log_level = nLogLevel;
 
 	m_strConfigPath = sFDFSConfig;
 	m_nLevelLog = nLogLevel;
 
-	// ³õÊ¼»¯fastfds¿Í»§¶Ë
+	// åˆå§‹åŒ–fastfdså®¢æˆ·ç«¯
 	int result = 0;
 	result = fastfdfs_client_init(sFDFSConfig);
 
@@ -73,7 +73,7 @@ int CFDFSClient::fdfs_dowloadfile( BufferInfo* pBuff, const char *group_name, co
 		return FSC_ERROR_CODE_CONNECT_TRACKER_FAIL;
 	}
 
-    // ²éÑ¯storage ·þÎñµØÖ·
+    // æŸ¥è¯¢storage æœåŠ¡åœ°å€
 	ConnectionInfo storageServer;
 	ConnectionInfo* pStorageServer;
     result = tracker_query_storage_fetch(pTrackerServer, \
@@ -138,7 +138,7 @@ int CFDFSClient::fdfs_uploadfile(const char *file_content, const char *file_ext_
 	if (pTrackerServer == NULL)
 	{
 		result = (errno != 0 ? errno : ECONNREFUSED);
-		logErrorEx(&g_log_context, "CFDFSClient::init() tracker_get_connection is failed, result:%d", result);
+		logErrorEx(&g_log_context, "CFDFSClient::fdfs_uploadfile() tracker_get_connection is failed, result:%d", result);
 
 		return FSC_ERROR_CODE_CONNECT_TRACKER_FAIL;
 	}
@@ -196,6 +196,78 @@ int CFDFSClient::fdfs_uploadfile(const char *file_content, const char *file_ext_
     return result;
 }
 
+int CFDFSClient::fdfs_slave_uploadfile( const char *file_content, const char *master_filename,
+                                        const char *prefix_name, const char *file_ext_name, 
+                                        int file_size, int& name_size, char*& remote_file_name)
+{
+    int result = 0;
+    ConnectionInfo *pTrackerServer = tracker_get_connection();
+	if (pTrackerServer == NULL)
+	{
+		result = (errno != 0 ? errno : ECONNREFUSED);
+		logErrorEx(&g_log_context, "CFDFSClient::fdfs_slave_uploadfile() tracker_get_connection is failed, result:%d", result);
+
+		return FSC_ERROR_CODE_CONNECT_TRACKER_FAIL;
+	}
+    
+	char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
+	char remote_filename[256];
+
+	int store_path_index;
+	ConnectionInfo storageServer;
+	ConnectionInfo* pStorageServer;
+	if ((result=tracker_query_storage_store(pTrackerServer, \
+		&storageServer, group_name, &store_path_index)) != 0)
+	{
+        tracker_disconnect_server_ex(pTrackerServer, true);
+
+		logErrorEx(&g_log_context, "tracker_query_storage fail, " \
+			"error no: %d, error info: %s\n", \
+			result, STRERROR(result));
+		return result;
+	}
+
+	if ((pStorageServer=tracker_connect_server(&storageServer, \
+		&result)) == NULL)
+	{
+		logErrorEx(&g_log_context, "CFDFSClient::fdfs_slave_uploadfile() \
+								   tracker_connect_server failed, result:%d, storage=%s:%d\n", 
+								   result, storageServer.ip_addr, \
+								   storageServer.port);
+        tracker_disconnect_server_ex(pTrackerServer, true);
+
+		return result;
+	}
+
+	result = storage_upload_slave_by_filebuff(pTrackerServer, \
+		pStorageServer, file_content, file_size, \
+        master_filename, prefix_name, file_ext_name, \
+		NULL, 0, \
+		group_name, remote_filename);
+	
+	//logErrorEx(&g_log_context, "master_filename:%s, prefix_name:%s, file_ext_name:%s, group_name:%s, remote_filename:%s\n", 
+	//	master_filename, prefix_name, file_ext_name, group_name, remote_filename);
+	
+	if (result != 0)
+	{
+		const char* strMsg = STRERROR(result);
+		logErrorEx(&g_log_context, "CFDFSClient::fdfs_slave_uploadfile() upload file fail, " \
+			"group:%s, remote;%s, error no: %d, error info: %s\n", \
+			group_name, remote_filename, result, strMsg);
+	}
+    else{
+        int nNameSize = snprintf(m_pRemoteFileName,MAX_REMOTE_FILE_NAME_SIZE-1, "%s/%s", group_name, remote_filename);
+        remote_file_name = m_pRemoteFileName;
+        name_size = nNameSize;
+    }
+    
+    tracker_disconnect_server_ex(pStorageServer, true);
+    tracker_disconnect_server_ex(pTrackerServer, true);
+
+    return result;
+}
+
+
 int CFDFSClient::fdfs_deletefile( const char *group_name, const char* remote_filename )
 {
 	int result = 0;
@@ -210,7 +282,7 @@ int CFDFSClient::fdfs_deletefile( const char *group_name, const char* remote_fil
 		return FSC_ERROR_CODE_CONNECT_TRACKER_FAIL;
 	}
     
-	// ²éÑ¯storage ·þÎñµØÖ·
+	// æŸ¥è¯¢storage æœåŠ¡åœ°å€
 	ConnectionInfo storageServer;
 	ConnectionInfo* pStorageServer;
 	result = tracker_query_storage_update(pTrackerServer, \
@@ -241,7 +313,7 @@ int CFDFSClient::fdfs_deletefile( const char *group_name, const char* remote_fil
 		return FSC_ERROR_CODE_CONNECT_STORAGE_FAIL;
 	}
 
-	// É¾³ý²Ù×÷
+	// åˆ é™¤æ“ä½œ
 	result=storage_delete_file(pTrackerServer, NULL, group_name, remote_filename);
 	if (result != 0)
 	{
@@ -442,7 +514,7 @@ int CFDFSClient::list_storages(const char* group_name,
 		Info["storage_port"] = pStorage->storage_port;	
 		Info["current_write_path"] = pStorage->current_write_path;	
 
-		// Í³¼ÆÊý¾Ý
+		// ç»Ÿè®¡æ•°æ®
 		pStorageStat = &(pStorage->stat);
 		Info["total_upload_count"] = (long long)pStorageStat->total_upload_count;	
 		Info["success_upload_count"] = (long long)pStorageStat->success_upload_count;	

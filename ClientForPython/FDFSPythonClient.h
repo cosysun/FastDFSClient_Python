@@ -1,4 +1,4 @@
-#ifndef PYTHON_FDFS_CLIENT_H
+ï»¿#ifndef PYTHON_FDFS_CLIENT_H
 #define PYTHON_FDFS_CLIENT_H
 
 #include <Python.h>
@@ -10,20 +10,20 @@
 #include "FDFSClient.h"
 #include <string>
 
-//´íÎóÂë
+//é”™è¯¯ç 
 enum FSC_CODE
 {
-	FSC_ERROR_CODE_NONE = 0,				//Ã»ÓĞ´íÎó
-	FSC_ERROR_CODE_INIT_FAILED,				//³õÊ¼»¯Ê§°Ü
+	FSC_ERROR_CODE_NONE = 0,				//æ²¡æœ‰é”™è¯¯
+	FSC_ERROR_CODE_INIT_FAILED,				//åˆå§‹åŒ–å¤±è´¥
 	
-	FSC_ERROR_CODE_PARAM_INVAILD,			//²ÎÊıÎŞĞ§
+	FSC_ERROR_CODE_PARAM_INVAILD,			//å‚æ•°æ— æ•ˆ
 
-	FSC_ERROR_CODE_CONNECT_TRACKER_FAIL,    //Á¬½ÓÊ§°Ü
-	FSC_ERROR_CODE_QUERY_STORAGE_FAIL,		//²éÑ¯storageµØÖ·Ê§°Ü
-	FSC_ERROR_CODE_CONNECT_STORAGE_FAIL,	//Á¬½ÓstorageÊ§°Ü
+	FSC_ERROR_CODE_CONNECT_TRACKER_FAIL,    //è¿æ¥å¤±è´¥
+	FSC_ERROR_CODE_QUERY_STORAGE_FAIL,		//æŸ¥è¯¢storageåœ°å€å¤±è´¥
+	FSC_ERROR_CODE_CONNECT_STORAGE_FAIL,	//è¿æ¥storageå¤±è´¥
 
-	FSC_ERROR_CODE_DOWNLAOD_FILE_FAIL,		//ÏÂÔØÎÄ¼şÊ§°Ü
-	FSC_ERROR_CODE_DELETE_FILE_FAIL,		//É¾³ıÎÄ¼şÊ§°Ü
+	FSC_ERROR_CODE_DOWNLAOD_FILE_FAIL,		//ä¸‹è½½æ–‡ä»¶å¤±è´¥
+	FSC_ERROR_CODE_DELETE_FILE_FAIL,		//åˆ é™¤æ–‡ä»¶å¤±è´¥
 };
 
 #ifdef __cplusplus
@@ -31,10 +31,10 @@ extern "C"
 {
 #endif
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£º³õÊ¼»¯fastdfs
-//²ÎÊı£º
-//      const char* sConfig IN FastDFSÅäÖÃÎÄ¼şÂ·¾¢ ±ÈÈç:/etc/fdfs/client.conf 
-//		int nLogLevel ÈÕÖ¾µÈ¼¶ ²ÉÓÃµÄÊÇunix ÈÕÖ¾µÈ¼¶
+//åŠŸèƒ½ï¼šåˆå§‹åŒ–fastdfs
+//å‚æ•°ï¼š
+//      const char* sConfig IN FastDFSé…ç½®æ–‡ä»¶è·¯åŠ² æ¯”å¦‚:/etc/fdfs/client.conf 
+//		int nLogLevel æ—¥å¿—ç­‰çº§ é‡‡ç”¨çš„æ˜¯unix æ—¥å¿—ç­‰çº§
 //  0: LOG_EMERG
 //	1: LOG_ALERT
 //	2: LOG_CRIT
@@ -44,85 +44,104 @@ extern "C"
 //	6: LOG_INFO
 //	7: LOG_DEBUG
 
-//·µ»Ø£ºint& anError OUT ´íÎóĞÅÏ¢
+//è¿”å›ï¼šint& anError OUT é”™è¯¯ä¿¡æ¯
 
-//±¸×¢£º
-//      ×¢Òâ³õÊ¼»¯Ê±£¬±ØĞë±£Ö¤confÎÄ¼şÖĞbase_pathÄ¿Â¼´æÔÚ
-//		±ÈÈç base_path=/fastdfs/tracker, ĞèÒª±£Ö¤/fastdfs/tracker´æÔÚ£¬
-//		²»´æÔÚ Ğè´´½¨mkdir /fastdfs/tracker
+//å¤‡æ³¨ï¼š
+//      æ³¨æ„åˆå§‹åŒ–æ—¶ï¼Œå¿…é¡»ä¿è¯confæ–‡ä»¶ä¸­base_pathç›®å½•å­˜åœ¨
+//		æ¯”å¦‚ base_path=/fastdfs/tracker, éœ€è¦ä¿è¯/fastdfs/trackerå­˜åœ¨ï¼Œ
+//		ä¸å­˜åœ¨ éœ€åˆ›å»ºmkdir /fastdfs/tracker
 //////////////////////////////////////////////////////////////////////////
 int fdfs_init(const char* sConfig, int nLogLevel);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£ºÏÂÔØÎÄ¼ş
-//²ÎÊı£º
-//      BufferInfo* pBuff OUT ·µ»ØµÄÎÄ¼şĞÅÏ¢£¬ÎÄ¼ş´óĞ¡£¬ÒÔ¼°ÄÚ´æ´óĞ¡
-//      const char *group_name IN ´æ´¢×éÃû
-//      const char* remote_filename IN ´æ´¢Ãû
-//      ±ÈÈç£ºgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
+//åŠŸèƒ½ï¼šä¸‹è½½æ–‡ä»¶
+//å‚æ•°ï¼š
+//      BufferInfo* pBuff OUT è¿”å›çš„æ–‡ä»¶ä¿¡æ¯ï¼Œæ–‡ä»¶å¤§å°ï¼Œä»¥åŠå†…å­˜å¤§å°
+//      const char *group_name IN å­˜å‚¨ç»„å
+//      const char* remote_filename IN å­˜å‚¨å
+//      æ¯”å¦‚ï¼šgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
 //		group_name:group2 
 //		remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 int fdfs_download(BufferInfo* pBuff, const char* group_name, const char* remote_filename);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£ºÉÏ´«ÎÄ¼ş
-//²ÎÊı£º
-//      char *file_content IN ÎÄ¼şÄÚÈİ
-//      const char *file_ext_name IN ÎÄ¼şÀ©Õ¹Ãû
-//		int file_size IN ÎÄ¼ş´óĞ¡
-//		int& name_size	OUT ·µ»ØµÄÎÄ¼şÃû´óĞ¡
-//      char* remote_file_name OUT ·µ»ØµÄÎÄ¼şÃû
-//      ±ÈÈç£ºgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
+//åŠŸèƒ½ï¼šä¸Šä¼ æ–‡ä»¶
+//å‚æ•°ï¼š
+//      char *file_content IN æ–‡ä»¶å†…å®¹
+//      const char *file_ext_name IN æ–‡ä»¶æ‰©å±•å
+//		int file_size IN æ–‡ä»¶å¤§å°
+//		int& name_size	OUT è¿”å›çš„æ–‡ä»¶åå¤§å°
+//      char* remote_file_name OUT è¿”å›çš„æ–‡ä»¶å
+//      æ¯”å¦‚ï¼šgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 int fdfs_upload(const char *file_content, const char *file_ext_name, int file_size, 
 				  int& name_size, char*& remote_file_name);
+                  
+//////////////////////////////////////////////////////////////////////////
+//åŠŸèƒ½ï¼šä»æ–‡ä»¶ä¸Šä¼ 
+//å‚æ•°ï¼š
+//      char *file_content IN æ–‡ä»¶å†…å®¹
+//      const char *master_filename IN ä¸»æ–‡ä»¶å å­˜åœ¨æœåŠ¡ç«¯æ–‡ä»¶å
+//      æ¯”å¦‚ï¼šgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250
+//      const char *prefix_name IN ä»å‰ç¼€å æ¯”å¦‚200*200
+//      const char *file_ext_name IN æ–‡ä»¶æ‰©å±•å
+//		int file_size IN æ–‡ä»¶å¤§å°
+//		int& name_size	OUT è¿”å›çš„æ–‡ä»¶åå¤§å°
+//      char* remote_file_name OUT è¿”å›çš„æ–‡ä»¶å
+//      æ¯”å¦‚ï¼šgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
+
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
+//////////////////////////////////////////////////////////////////////////
+int fdfs_slave_upload(const char *file_content, const char *master_filename,
+                      const char *prefix_name, const char *file_ext_name, int file_size, 
+                      int& name_size, char*& remote_file_name);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£ºÉ¾³ıÎÄ¼ş
-//²ÎÊı£º
-//      const char *group_name IN ´æ´¢×éÃû
-//      const char* remote_filename IN ´æ´¢Ãû
-//      ±ÈÈç£ºgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
+//åŠŸèƒ½ï¼šåˆ é™¤æ–‡ä»¶
+//å‚æ•°ï¼š
+//      const char *group_name IN å­˜å‚¨ç»„å
+//      const char* remote_filename IN å­˜å‚¨å
+//      æ¯”å¦‚ï¼šgroup2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
 //		group_name:group2 
 //		remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png 
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 int fdfs_delete(const char *group_name, const char* remote_filename);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£º»ñÈ¡ËùÓĞ×éĞÅÏ¢
-//²ÎÊı£º
-//      BufferInfo* group_info OUT ËùÓĞ×éĞÅÏ¢
+//åŠŸèƒ½ï¼šè·å–æ‰€æœ‰ç»„ä¿¡æ¯
+//å‚æ•°ï¼š
+//      BufferInfo* group_info OUT æ‰€æœ‰ç»„ä¿¡æ¯
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 
 int list_all_groups(BufferInfo* group_info);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£º»ñÈ¡Ö¸¶¨×éĞÅÏ¢
-//²ÎÊı£º
-//		const char* group_name IN ×éÃû Èç£ºgroup1
-//      BufferInfo* group_info OUT ËùÓĞ×éĞÅÏ¢
+//åŠŸèƒ½ï¼šè·å–æŒ‡å®šç»„ä¿¡æ¯
+//å‚æ•°ï¼š
+//		const char* group_name IN ç»„å å¦‚ï¼šgroup1
+//      BufferInfo* group_info OUT æ‰€æœ‰ç»„ä¿¡æ¯
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 int list_one_group(const char* group_name, BufferInfo *group_info);
 
 //////////////////////////////////////////////////////////////////////////
-//¹¦ÄÜ£º»ñÈ¡storageĞÅÏ¢
-//²ÎÊı£º
-//		const char* group_name IN ×éÃû Èç£ºgroup1
-//		const char* storage_id IN ×éÃû Èç£ºstorage ip
-//      BufferInfo* storages_info OUT ´æ´¢ĞÅÏ¢
+//åŠŸèƒ½ï¼šè·å–storageä¿¡æ¯
+//å‚æ•°ï¼š
+//		const char* group_name IN ç»„å å¦‚ï¼šgroup1
+//		const char* storage_id IN ç»„å å¦‚ï¼šstorage ip
+//      BufferInfo* storages_info OUT å­˜å‚¨ä¿¡æ¯
 
-// ·µ»Ø£º0:³É¹¦ ·ñÔòÊ§°Ü¡£
+// è¿”å›ï¼š0:æˆåŠŸ å¦åˆ™å¤±è´¥ã€‚
 //////////////////////////////////////////////////////////////////////////
 
 int list_storages(const char* group_name, 
