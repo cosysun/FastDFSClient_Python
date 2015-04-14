@@ -87,7 +87,7 @@ int fdfs_upload(const char *file_content, const char *file_ext_name, int file_si
 //参数：
 //      char *file_content IN 文件内容
 //      const char *master_filename IN 主文件名 存在服务端文件名
-//      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250
+//      比如：M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250
 //      const char *prefix_name IN 从前缀名 比如200*200
 //      const char *file_ext_name IN 文件扩展名
 //		int file_size IN 文件大小
