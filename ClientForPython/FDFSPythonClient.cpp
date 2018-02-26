@@ -157,8 +157,6 @@ int fdfs_init(const char* sConfig, int nLogLevel)
 
 int fdfs_destory()
 {
-	g_pClient = new CFDFSClient();
-
 	if (NULL != g_pClient)
 	{
 		delete g_pClient;
