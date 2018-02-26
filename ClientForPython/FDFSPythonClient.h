@@ -148,6 +148,8 @@ int list_storages(const char* group_name,
 				  const char* storage_id, 
 				  BufferInfo* storages_info);
 
+// 销毁fdfs客户端
+int fdfs_destory();
 #ifdef __cplusplus
 }
 #endif

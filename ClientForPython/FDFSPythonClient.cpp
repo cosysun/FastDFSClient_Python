@@ -18,6 +18,13 @@ static PyObject * wrap_fdfs_init(PyObject *self, PyObject *args)
 
 }  
 
+static PyObject * wrap_fdfs_destory(PyObject *self, PyObject *args) 
+{  
+	int nRes = fdfs_destory();  
+	return Py_BuildValue("i", nRes);
+
+}  
+
 static PyObject * wrap_fdfs_download(PyObject *self, PyObject *args) 
 {  
 	const char* sGroupName;
@@ -116,6 +123,7 @@ static PyMethodDef FDFSMethods[] = {
 	{ "list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS, "Execute a shell command." }, 
 	{ "list_one_group", wrap_fdfs_list_one_group, METH_VARARGS, "Execute a shell command." }, 
 	{ "list_storages", wrap_list_storages, METH_VARARGS, "Execute a shell command." }, 
+	{ "fdfs_destory", wrap_fdfs_destory, METH_VARARGS, "Execute a shell command." },  
 	{ NULL, NULL, 0, NULL }  
 };  
 
@@ -145,6 +153,18 @@ int fdfs_init(const char* sConfig, int nLogLevel)
 	}
 
 	return nResult;
+}
+
+int fdfs_destory()
+{
+	g_pClient = new CFDFSClient();
+
+	if (NULL != g_pClient)
+	{
+		delete g_pClient;
+		g_pClient = NULL;
+	}
+	return 0;
 }
 
 int fdfs_download(BufferInfo* pBuff, const char *group_name, const char* remote_filename) 
