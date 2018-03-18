@@ -117,7 +117,7 @@ static PyMethodDef FDFSMethods[] = {
 	{ "fdfs_init", wrap_fdfs_init, METH_VARARGS, "Execute a shell command." },  
 	{ "fdfs_download", wrap_fdfs_download, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_upload", wrap_fdfs_upload, METH_VARARGS, "Execute a shell command." }, 
-    	{ "fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command." }, 
+    { "fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command." }, 
 	{ "fdfs_delete", wrap_fdfs_delete, METH_VARARGS, "Execute a shell command." }, 
 	
 	{ "list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS, "Execute a shell command." }, 
@@ -127,8 +127,16 @@ static PyMethodDef FDFSMethods[] = {
 	{ NULL, NULL, 0, NULL }  
 };  
 
+static struct PyModuleDef FDFSModuledef= {
+	PyModuleDef_HEAD_INIT,
+	"FDFSPythonClient",
+	NULL,
+	-1,
+	FDFSMethods
+};
 
 // 模块初始化方法  
+#if 0
 PyMODINIT_FUNC initFDFSPythonClient(void) {  
 
 	//初始模块
@@ -136,6 +144,27 @@ PyMODINIT_FUNC initFDFSPythonClient(void) {
 	if (m == NULL)  
 		return;  
 }  
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_FDFSPythonClient(void)
+#else
+PyMODINIT_FUNC initFDFSPythonClient(void) 
+#endif
+{  
+   #if PY_MAJOR_VERSION >= 3
+		PyObject *m = PyModule_Create(&FDFSModuledef);
+   #else
+		PyObject *m = Py_InitModule("FDFSPythonClient", FDFSMethods);
+   #endif
+
+   if (m == NULL)  
+       INITERROR;  
+   
+   #if PY_MAJOR_VERSION >= 3
+       return m;
+   #endif
+}
 
 ///////////////////////////接口实现///////////////////////////////////////////////
 CFDFSClient * g_pClient = NULL;

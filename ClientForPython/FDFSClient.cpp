@@ -7,7 +7,8 @@
 CFDFSClient::CFDFSClient(void)
 {
 	m_pTrackerServer = NULL;
-	m_RecvBufferInfo = {0};
+	//m_RecvBufferInfo = {0};
+	memset(&m_RecvBufferInfo,0,sizeof(m_RecvBufferInfo));
 	m_pRemoteFileName = NULL;
 }
 

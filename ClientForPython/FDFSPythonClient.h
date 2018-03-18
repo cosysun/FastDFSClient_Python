@@ -10,6 +10,17 @@
 #include "FDFSClient.h"
 #include <string>
 
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+struct Module_State{
+   PyObject *m_error;
+};
+#define INITERROR return NULL
+#else
+#define INITERROR return
+#endif
+
+
 //错误码
 enum FSC_CODE
 {
