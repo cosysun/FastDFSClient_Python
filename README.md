@@ -10,7 +10,11 @@ ldconfig
 
 3、接入client目录下 执行Make
 
-make
+(1)python2
+mak  -f  Makefile
+
+(2)python3
+make -f Makefile3
 
 4、进入ClientForPython，生成.so文件
 
@@ -20,6 +24,9 @@ http://blog.csdn.net/lenyusun/article/details/44057139
 大家如果有问题或者好的想法，欢迎加入群：291368579
 
 ==========================================================
+
+2018.3.18 ver 1.2.0
+增加了对python3.6的支持
 
 2015.4.13 ver 1.1.0
 增加了slave_upload接口
