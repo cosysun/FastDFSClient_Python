@@ -11,7 +11,7 @@ ldconfig
 3、接入client目录下 执行Make
 
 (1)python2
-mak  -f  Makefile
+make  -f  Makefile
 
 (2)python3
 make -f Makefile3
