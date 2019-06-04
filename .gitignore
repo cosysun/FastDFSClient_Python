@@ -1,0 +1,6 @@
+# NetBeans
+nbproject/
+# VSCode
+.vscode/
+# share library
+*.[ls]o

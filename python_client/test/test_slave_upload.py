@@ -1,6 +1,6 @@
 import sys
 import os
-import FDFSPythonClient 
+import FDFSPythonClient
 import time
 
 sys.path.append(os.getcwd())
@@ -16,16 +16,16 @@ finally:
 
 lastTime = time.time()
 
-# send normal picture 
+# send normal picture
 r = FDFSPythonClient.fdfs_upload(file_content, "")
 prefix_name = "200x200"
-print r
+print(r)
 
 # send slave pic
 master_filename = r[1][r[1].find('/')+1:]
-slave_r = FDFSPythonClient.fdfs_slave_upload(file_content, "png",master_filename, prefix_name)
+slave_r = FDFSPythonClient.fdfs_slave_upload(
+    file_content, "png", master_filename, prefix_name)
 
-print (time.time() - lastTime)*1000
+print((time.time() - lastTime)*1000)
 
-print slave_r
-
+print(slave_r)
