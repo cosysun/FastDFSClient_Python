@@ -1,7 +1,6 @@
 #ifndef FDFSPYTHONCLIENT_H
 #define FDFSPYTHONCLIENT_H
 
-#include <string>
 #include <Python.h>
 #include "fastcommon/base64.h"
 #include "fastcommon/logger.h"
@@ -10,7 +9,6 @@
 #include "fastdfs/fdfs_client.h"
 
 #if PY_MAJOR_VERSION >= 3
-#define IS_PY3K
 
 struct Module_State {
     PyObject *m_error;
@@ -43,24 +41,30 @@ extern "C" {
     //功能：初始化fastdfs
     //参数：
     //      const char* sConfig IN FastDFS配置文件路劲 比如:/etc/fdfs/client.conf
-    //		int nLogLevel 日志等级 采用的是unix 日志等级
-    //  0: LOG_EMERG
-    //	1: LOG_ALERT
-    //	2: LOG_CRIT
-    //	3: LOG_ERR
-    //	4: LOG_WARNING
-    //	5: LOG_NOTICE
-    //	6: LOG_INFO
-    //	7: LOG_DEBUG
+    //      int nLogLevel（可选）日志等级 采用的是unix 日志等级
+    //          0: LOG_EMERG
+    //          1: LOG_ALERT
+    //          2: LOG_CRIT
+    //          3: LOG_ERR
+    //          4: LOG_WARNING
+    //          5: LOG_NOTICE
+    //          6: LOG_INFO
+    //          7: LOG_DEBUG
+    //      int nLogFD（可选）重定向输出日志的文件描述符
+    //          默认日志路径为配置文件中base_path/logs/cliented.log
+    //      bool bLogTakeOverStd（可选）是否将stdout与stderr重定向输出到文件
+    //          默认为False
 
     //返回：int& anError OUT 错误信息
 
     //备注：
     //      注意初始化时，必须保证conf文件中base_path目录存在
-    //		比如 base_path=/fastdfs/tracker, 需要保证/fastdfs/tracker存在，
-    //		不存在 需创建mkdir /fastdfs/tracker
+    //      比如 base_path=/fastdfs/tracker, 需要保证/fastdfs/tracker存在，
+    //      不存在 需创建mkdir /fastdfs/tracker
+    //      *请保证程序有对base_path目录下的读写权限。
     //////////////////////////////////////////////////////////////////////////
-    int fdfs_init(const char *sConfig, int nLogLevel);
+    int fdfs_init(const char *sConfig,
+            int nLogLevel, int nLogFD, bool bLogTakeOverStd);
 
     //////////////////////////////////////////////////////////////////////////
     //功能：下载文件

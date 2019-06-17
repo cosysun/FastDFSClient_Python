@@ -1,19 +1,22 @@
 #include "FDFSClient.h"
 #include "FDFSPythonClient.h"
 
-//////////////////////////python 与 C++ 接口////////////////////////////////////////////////
+////////////////////////////// Python 与 C++ 接口 //////////////////////////////
 
-static PyObject *wrap_fdfs_init(PyObject *self, PyObject *args) {
+static PyObject *wrap_fdfs_init(PyObject *self, PyObject *args, PyObject *kw) {
+    static char *keywords[] = {(char *) "config", (char *) "log_level",
+        (char *) "log_fd", (char *) "take_over_std", NULL};
     const char *sConfig;
-    int nLogLevel = LOG_ERR;
-    if (!PyArg_ParseTuple(args, "si", &sConfig, &nLogLevel))
+    int nLogLevel = -1;
+    int nLogFD = -1;
+    bool bLogTakeOverStd = false;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "s|iip", keywords, &sConfig,
+            &nLogLevel, &nLogFD, &bLogTakeOverStd))
         return NULL;
 
-    if (nLogLevel < LOG_EMERG || nLogLevel > LOG_DEBUG) {
-        nLogLevel = LOG_ERR;
-    }
     int nRes = 0;
-    nRes = fdfs_init(sConfig, nLogLevel);
+    nRes = fdfs_init(sConfig, nLogLevel, nLogFD, bLogTakeOverStd);
     return Py_BuildValue("i", nRes);
 }
 
@@ -42,7 +45,8 @@ static PyObject *wrap_fdfs_upload(PyObject *self, PyObject *args) {
 
     int nNameSize = 0;
     char *pRemoteFileName;
-    int res = fdfs_upload(sFileContent, sFileExtName, nFileSize, nNameSize, pRemoteFileName);
+    int res = fdfs_upload(sFileContent, sFileExtName, nFileSize, nNameSize,
+            pRemoteFileName);
     return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
 }
 
@@ -52,8 +56,8 @@ static PyObject *wrap_fdfs_slave_upload(PyObject *self, PyObject *args) {
     const char *sMasterFileName;
     const char *sPrefixName;
     int nFileSize = 0;
-    if (!PyArg_ParseTuple(args, "s#sss", &sFileContent, &nFileSize, &sFileExtName,
-            &sMasterFileName, &sPrefixName))
+    if (!PyArg_ParseTuple(args, "s#sss", &sFileContent, &nFileSize,
+            &sFileExtName, &sMasterFileName, &sPrefixName))
         return NULL;
 
     int nNameSize = 0;
@@ -102,31 +106,39 @@ static PyObject *wrap_list_storages(PyObject *self, PyObject *args) {
 
 // 方法列表
 static PyMethodDef FDFSMethods[] = {
-
     //python中注册的函数名
-    {"fdfs_init", wrap_fdfs_init, METH_VARARGS, "Execute a shell command."},
-    {"fdfs_download", wrap_fdfs_download, METH_VARARGS, "Execute a shell command."},
-    {"fdfs_upload", wrap_fdfs_upload, METH_VARARGS, "Execute a shell command."},
-    {"fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS, "Execute a shell command."},
-    {"fdfs_delete", wrap_fdfs_delete, METH_VARARGS, "Execute a shell command."},
+    {"fdfs_init", (PyCFunction) wrap_fdfs_init, METH_VARARGS | METH_KEYWORDS,
+        "Execute a shell command."},
+    {"fdfs_download", wrap_fdfs_download, METH_VARARGS,
+        "Execute a shell command."},
+    {"fdfs_upload", wrap_fdfs_upload, METH_VARARGS,
+        "Execute a shell command."},
+    {"fdfs_slave_upload", wrap_fdfs_slave_upload, METH_VARARGS,
+        "Execute a shell command."},
+    {"fdfs_delete", wrap_fdfs_delete, METH_VARARGS,
+        "Execute a shell command."},
 
-    {"list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS, "Execute a shell command."},
-    {"list_one_group", wrap_fdfs_list_one_group, METH_VARARGS, "Execute a shell command."},
-    {"list_storages", wrap_list_storages, METH_VARARGS, "Execute a shell command."},
-    {"fdfs_destory", wrap_fdfs_destory, METH_VARARGS, "Execute a shell command."},
+    {"list_all_groups", wrap_fdfs_list_all_groups, METH_VARARGS,
+        "Execute a shell command."},
+    {"list_one_group", wrap_fdfs_list_one_group, METH_VARARGS,
+        "Execute a shell command."},
+    {"list_storages", wrap_list_storages, METH_VARARGS,
+        "Execute a shell command."},
+    {"fdfs_destory", wrap_fdfs_destory, METH_VARARGS,
+        "Execute a shell command."},
     {NULL, NULL, 0, NULL}
-};
-
-static struct PyModuleDef FDFSModuledef = {
-    PyModuleDef_HEAD_INIT,
-    "FDFSPythonClient",
-    NULL,
-    -1,
-    FDFSMethods
 };
 
 // 模块初始化方法
 #if PY_MAJOR_VERSION >= 3
+
+static struct PyModuleDef FDFSModuledef = {
+    PyModuleDef_HEAD_INIT,
+    "FDFSPythonClient",
+    "FastDFS Client for Python",
+    -1,
+    FDFSMethods
+};
 
 PyMODINIT_FUNC PyInit_FDFSPythonClient(void) {
     //初始模块
@@ -146,15 +158,20 @@ PyMODINIT_FUNC initFDFSPythonClient(void) {
 }
 #endif
 
-///////////////////////////接口实现///////////////////////////////////////////////
+/////////////////////////////////// 接口实现 ///////////////////////////////////
 CFDFSClient *g_pClient = NULL;
 
-int fdfs_init(const char *sConfig, int nLogLevel) {
+int fdfs_init(const char *sConfig,
+        int nLogLevel, int nLogFD, bool bLogTakeOverStd) {
+    if (g_pClient != NULL) {
+        delete g_pClient;
+        g_pClient = NULL;
+    }
     g_pClient = new CFDFSClient();
 
     int nResult = 0;
-    nResult = g_pClient->init(sConfig, nLogLevel);
-    if (0 != nResult) {
+    nResult = g_pClient->init(sConfig, nLogLevel, nLogFD, bLogTakeOverStd);
+    if (nResult != 0) {
         delete g_pClient;
         g_pClient = NULL;
     }
@@ -170,7 +187,8 @@ int fdfs_destory() {
     return 0;
 }
 
-int fdfs_download(BufferInfo *pBuff, const char *group_name, const char *remote_filename) {
+int fdfs_download(BufferInfo *pBuff,
+        const char *group_name, const char *remote_filename) {
     if (group_name == NULL || remote_filename == NULL) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }

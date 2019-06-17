@@ -23,38 +23,12 @@
 
 3. 编译生成`FDFSPythonClient.so`文件
 
-详细说明文档请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139)
-
-- 一种可能的编译步骤：
-
-  ```bash
-  sudo su root
-  
-  apt install make gcc-4.8 -y
-  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40
-  update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 40
-  
-  # install libfastcommon
-  cd /usr/local/src/
-  git clone https://github.com/happyfish100/libfastcommon.git --depth 1
-  cd libfastcommon/
-  ./make.sh && ./make.sh install
-  
-  # install fastdfs
-  cd ../
-  git clone https://github.com/happyfish100/fastdfs.git --depth 1
-  cd fastdfs/
-  ./make.sh && ./make.sh install
-  
-  # Python Client
-  apt install -y python3-dev libjsoncpp-dev g++
-  cd ../
-  git clone https://github.com/lengyanyu258/FastDFSClient_Python.git --depth 1
-  cd FastDFSClient_Python/python_client
-  make
-  ```
+详细说明文档请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 Wiki
 
 ### Revision History
+
+- 2019.6.27 ver 2.1.0
+  - 升级了`fdfs_init`方法，支持日志输出和关键字可选传参
 
 - 2019.6.14 ver 2.0.0
   - 移除了对`Python 2`的支持

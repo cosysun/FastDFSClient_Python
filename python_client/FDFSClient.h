@@ -9,25 +9,32 @@
 #include "fastdfs/fdfs_client.h"
 
 class CFDFSClient {
+private:
+    BufferInfo m_RecvBufferInfo;
+    char *m_pRemoteFileName;
+
 public:
     CFDFSClient(void);
     ~CFDFSClient(void);
 
-public:
     // 初始化客户端
-    int init(const char *sFDFSConfig, int nLogLevel);
+    int init(const char *sFDFSConfig,
+            int nLogLevel, int nLogFD, bool bLogTakeOverStd);
 
     // 下载文件
-    int fdfs_dowloadfile(BufferInfo *pBuff, const char *group_name, const char *remote_filename);
+    int fdfs_dowloadfile(BufferInfo *pBuff,
+            const char *group_name, const char *remote_filename);
 
     // 上传
-    int fdfs_uploadfile(const char *file_content, const char *file_ext_name, int file_size,
-            int &name_size, char *&remote_file_name);
+    int fdfs_uploadfile(const char *file_content,
+            const char *file_ext_name, int file_size, int &name_size,
+            char *&remote_file_name);
 
     // slave上传
-    int fdfs_slave_uploadfile(const char *file_content, const char *master_filename,
-            const char *prefix_name, const char *file_ext_name,
-            int file_size, int &name_size, char *&remote_file_name);
+    int fdfs_slave_uploadfile(const char *file_content,
+            const char *master_filename, const char *prefix_name,
+            const char *file_ext_name, int file_size, int &name_size,
+            char *&remote_file_name);
 
     // 删除
     int fdfs_deletefile(const char *group_name, const char *remote_filename);
@@ -42,18 +49,6 @@ public:
     int list_storages(const char *group_name,
             const char *storage_id,
             BufferInfo *storages_info);
-
-private:
-    void re_fastfds_client_init();
-
-    int fastfdfs_client_init(const char *sFDFSConfig);
-
-private:
-    ConnectionInfo *m_pTrackerServer;
-    BufferInfo m_RecvBufferInfo;
-    char *m_pRemoteFileName;
-    std::string m_strConfigPath;
-    int m_nLevelLog;
 };
 
 #endif // FDFSCLIENT_H
