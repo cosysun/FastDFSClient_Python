@@ -27,6 +27,11 @@
 
 ### Revision History
 
+- 2019.6.28 ver 2.2.0
+  - 增加了`upload_appender`接口
+  - 增加了`append_file`接口
+  - 修改了其他接口名，如`slave_upload`接口修改为`upload_slave`
+
 - 2019.6.27 ver 2.1.0
   - 升级了`fdfs_init`方法，支持日志输出和关键字可选传参
 
