@@ -91,7 +91,11 @@ static PyObject *wrap_download_file(PyObject *self, PyObject *args) {
 
     BufferInfo tgBuff = {0};
     int res = download_file(&tgBuff, sGroupName, sRomteName);
+#if PY_MAJOR_VERSION >= 3
     return Py_BuildValue("(i, y#)", res, tgBuff.buff, tgBuff.length);
+#else
+    return Py_BuildValue("(i, s#)", res, tgBuff.buff, tgBuff.length);
+#endif
 }
 
 static PyObject *wrap_delete_file(PyObject *self, PyObject *args) {
@@ -173,7 +177,7 @@ PyMODINIT_FUNC initFDFSPythonClient(void) {
     PyObject *m = Py_InitModule("FDFSPythonClient", FDFSMethods);
     if (m == NULL)
         INITERROR;
-    return m;
+    return;
 }
 #endif
 
