@@ -27,6 +27,9 @@
 
 ### Revision History
 
+- 2019.7.1 ver 2.2.1
+  - 兼容了`Python 2.7`
+
 - 2019.6.28 ver 2.2.0
   - 增加了`upload_appender`接口
   - 增加了`append_file`接口
