@@ -35,10 +35,10 @@ static PyObject *wrap_upload_file(PyObject *self, PyObject *args) {
         return NULL;
 
     int nNameSize = 0;
-    char *pRemoteFileName;
+    char *pRemoteFilename;
     int res = upload_file(sFileContent, sFileExtName, nFileSize, nNameSize,
-            pRemoteFileName);
-    return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
+            pRemoteFilename);
+    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
 }
 
 static PyObject *wrap_upload_appender(PyObject *self, PyObject *args) {
@@ -49,10 +49,10 @@ static PyObject *wrap_upload_appender(PyObject *self, PyObject *args) {
         return NULL;
 
     int nNameSize = 0;
-    char *pRemoteFileName;
+    char *pRemoteFilename;
     int res = upload_appender(sFileContent, sFileExtName, nFileSize, nNameSize,
-            pRemoteFileName);
-    return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
+            pRemoteFilename);
+    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
 }
 
 static PyObject *wrap_append_file(PyObject *self, PyObject *args) {
@@ -69,28 +69,29 @@ static PyObject *wrap_append_file(PyObject *self, PyObject *args) {
 static PyObject *wrap_upload_slave(PyObject *self, PyObject *args) {
     const char *sFileContent;
     const char *sFileExtName;
-    const char *sMasterFileName;
+    const char *sMasterFilename;
     const char *sPrefixName;
     int nFileSize = 0;
     if (!PyArg_ParseTuple(args, "s#sss", &sFileContent, &nFileSize,
-            &sFileExtName, &sMasterFileName, &sPrefixName))
+            &sFileExtName, &sMasterFilename, &sPrefixName))
         return NULL;
 
     int nNameSize = 0;
-    char *pRemoteFileName;
-    int res = upload_slave(sFileContent, sMasterFileName, sPrefixName,
-            sFileExtName, nFileSize, nNameSize, pRemoteFileName);
-    return Py_BuildValue("(i, s#)", res, pRemoteFileName, nNameSize);
+    char *pRemoteFilename;
+    int res = upload_slave(sFileContent, sMasterFilename, sPrefixName,
+            sFileExtName, nFileSize, nNameSize, pRemoteFilename);
+    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
 }
 
 static PyObject *wrap_download_file(PyObject *self, PyObject *args) {
     const char *sGroupName;
-    const char *sRomteName;
-    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sRomteName))
+    const char *sReomteFilename;
+    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sReomteFilename))
         return NULL;
 
     BufferInfo tgBuff = {0};
-    int res = download_file(&tgBuff, sGroupName, sRomteName);
+    int res = download_file(&tgBuff, sGroupName, sReomteFilename);
+
 #if PY_MAJOR_VERSION >= 3
     return Py_BuildValue("(i, y#)", res, tgBuff.buff, tgBuff.length);
 #else
@@ -100,17 +101,17 @@ static PyObject *wrap_download_file(PyObject *self, PyObject *args) {
 
 static PyObject *wrap_delete_file(PyObject *self, PyObject *args) {
     const char *sGroupName;
-    const char *sRomteName;
-    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sRomteName))
+    const char *sReomteFilename;
+    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sReomteFilename))
         return NULL;
 
-    int res = delete_file(sGroupName, sRomteName);
+    int res = delete_file(sGroupName, sReomteFilename);
     return Py_BuildValue("i", res);
 }
 
-static PyObject *wrap_list_all_groups(PyObject *self, PyObject *args) {
+static PyObject *wrap_list_groups(PyObject *self, PyObject *args) {
     BufferInfo GroupsInfo = {0};
-    int res = list_all_groups(&GroupsInfo);
+    int res = list_groups(&GroupsInfo);
     return Py_BuildValue("(i,s#)", res, GroupsInfo.buff, GroupsInfo.length);
 }
 
@@ -119,20 +120,20 @@ static PyObject *wrap_list_one_group(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "s", &sGroupName))
         return NULL;
 
-    BufferInfo GroupsInfo = {0};
-    int res = list_one_group(sGroupName, &GroupsInfo);
-    return Py_BuildValue("(i,s#)", res, GroupsInfo.buff, GroupsInfo.length);
+    BufferInfo GroupInfo = {0};
+    int res = list_one_group(sGroupName, &GroupInfo);
+    return Py_BuildValue("(i,s#)", res, GroupInfo.buff, GroupInfo.length);
 }
 
-static PyObject *wrap_list_storages(PyObject *self, PyObject *args) {
+static PyObject *wrap_list_servers(PyObject *self, PyObject *args) {
     const char *sGroupName;
     const char *sStorageID;
     if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sStorageID))
         return NULL;
 
-    BufferInfo StoragesInfo = {0};
-    int res = list_storages(sGroupName, sStorageID, &StoragesInfo);
-    return Py_BuildValue("(i,s#)", res, StoragesInfo.buff, StoragesInfo.length);
+    BufferInfo StoragesInfos = {0};
+    int res = list_servers(sGroupName, sStorageID, &StoragesInfos);
+    return Py_BuildValue("(i,s#)", res, StoragesInfos.buff, StoragesInfos.length);
 }
 
 // 方法列表
@@ -146,16 +147,16 @@ static PyMethodDef FDFSMethods[] = {
     {"upload_slave", wrap_upload_slave, METH_VARARGS, NULL},
     {"download_file", wrap_download_file, METH_VARARGS, NULL},
     {"delete_file", wrap_delete_file, METH_VARARGS, NULL},
-    {"list_all_groups", wrap_list_all_groups, METH_VARARGS, NULL},
+    {"list_groups", wrap_list_groups, METH_VARARGS, NULL},
     {"list_one_group", wrap_list_one_group, METH_VARARGS, NULL},
-    {"list_storages", wrap_list_storages, METH_VARARGS, NULL},
+    {"list_servers", wrap_list_servers, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
 
 // 模块初始化方法
 #if PY_MAJOR_VERSION >= 3
 
-static struct PyModuleDef FDFSModuledef = {
+static struct PyModuleDef FDFSModuleDef = {
     PyModuleDef_HEAD_INIT,
     "FDFSPythonClient",
     "FastDFS Client for Python",
@@ -165,7 +166,7 @@ static struct PyModuleDef FDFSModuledef = {
 
 PyMODINIT_FUNC PyInit_FDFSPythonClient(void) {
     //初始模块
-    PyObject *m = PyModule_Create(&FDFSModuledef);
+    PyObject *m = PyModule_Create(&FDFSModuleDef);
     if (m == NULL)
         INITERROR;
     return m;
@@ -301,12 +302,12 @@ int delete_file(const char *group_name, const char *remote_filename) {
     return result;
 }
 
-int list_all_groups(BufferInfo *group_info) {
+int list_groups(BufferInfo *group_info) {
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
     int result = 0;
-    result = g_pClient->list_all_groups(group_info);
+    result = g_pClient->list_groups(group_info);
 
     return result;
 }
@@ -325,9 +326,9 @@ int list_one_group(const char *group_name, BufferInfo *group_info) {
     return result;
 }
 
-int list_storages(const char *group_name,
+int list_servers(const char *group_name,
         const char *storage_id,
-        BufferInfo *storages_info) {
+        BufferInfo *storages_infos) {
     if (group_name == NULL) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
@@ -340,7 +341,7 @@ int list_storages(const char *group_name,
         return FSC_ERROR_CODE_INIT_FAILED;
 
     int result = 0;
-    result = g_pClient->list_storages(group_name, storage_id, storages_info);
+    result = g_pClient->list_servers(group_name, storage_id, storages_infos);
 
     return result;
 }

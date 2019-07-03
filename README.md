@@ -23,9 +23,12 @@
 
 3. 编译生成`FDFSPythonClient.so`文件
 
-详细说明文档请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 Wiki
+详细说明文档请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 [Wiki](https://github.com/lengyanyu258/FastDFSClient_Python/wiki)
 
 ### Revision History
+
+- 2019.7.3 ver 2.2.2
+  - 完善了错误日志输出信息
 
 - 2019.7.1 ver 2.2.1
   - 兼容了`Python 2.7`

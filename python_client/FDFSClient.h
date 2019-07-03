@@ -1,7 +1,6 @@
 #ifndef FDFSCLIENT_H
 #define FDFSCLIENT_H
 
-#include "fastcommon/base64.h"
 #include "fastcommon/logger.h"
 #include "fastcommon/sockopt.h"
 #include "fastdfs/fdfs_global.h"
@@ -43,16 +42,15 @@ public:
     // 删除
     int delete_file(const char *group_name, const char *remote_filename);
 
-    // 所有组信息
-    int list_all_groups(BufferInfo *group_info);
+    // list all groups
+    int list_groups(BufferInfo *group_info);
 
-    // 指定组信息
+    // list one group
     int list_one_group(const char *group_name, BufferInfo *group_info);
 
-    // storage信息
-    int list_storages(const char *group_name,
-            const char *storage_id,
-            BufferInfo *storages_info);
+    // list all servers of the specified group
+    int list_servers(const char *group_name, const char *storage_id,
+            BufferInfo *storages_infos);
 
 private:
     BufferInfo m_RecvBufferInfo;

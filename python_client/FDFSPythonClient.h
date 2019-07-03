@@ -2,7 +2,6 @@
 #define FDFSPYTHONCLIENT_H
 
 #include <Python.h>
-#include "fastcommon/base64.h"
 #include "fastcommon/logger.h"
 #include "fastcommon/sockopt.h"
 #include "fastdfs/fdfs_global.h"
@@ -75,7 +74,7 @@ extern "C" {
     //      char *file_buff IN 文件内容
     //      const char *file_ext_name IN 文件扩展名
     //      int file_size IN 文件大小
-    //      int& name_size	OUT 返回的文件名大小
+    //      int& name_size  OUT 返回的文件名大小
     //      char* remote_file_name OUT 返回的文件名
     //      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
 
@@ -90,7 +89,7 @@ extern "C" {
     //      char *file_buff IN 文件内容
     //      const char *file_ext_name IN 文件扩展名
     //      int file_size IN 文件大小
-    //      int& name_size	OUT 返回的文件名大小
+    //      int& name_size  OUT 返回的文件名大小
     //      char* remote_file_name OUT 返回的文件名
     //      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
     // 返回：0:成功 否则失败。
@@ -118,8 +117,8 @@ extern "C" {
     //      比如：M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250
     //      const char *prefix_name IN 从前缀名 比如200*200
     //      const char *file_ext_name IN 文件扩展名
-    //		int file_size IN 文件大小
-    //		int& name_size	OUT 返回的文件名大小
+    //      int file_size IN 文件大小
+    //      int& name_size  OUT 返回的文件名大小
     //      char* remote_file_name OUT 返回的文件名
     //      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
 
@@ -136,8 +135,8 @@ extern "C" {
     //      const char *group_name IN 存储组名
     //      const char* remote_filename IN 存储名
     //      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
-    //		group_name:group2
-    //		remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
+    //      group_name:group2
+    //      remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
 
     // 返回：0:成功 否则失败。
     //////////////////////////////////////////////////////////////////////////
@@ -150,27 +149,27 @@ extern "C" {
     //      const char *group_name IN 存储组名
     //      const char* remote_filename IN 存储名
     //      比如：group2/M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
-    //		group_name:group2
-    //		remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
+    //      group_name:group2
+    //      remote_filename: M00/00/00/CgEIzVRhnJWAZfVkAAAsFwWtoVg250.png
 
     // 返回：0:成功 否则失败。
     //////////////////////////////////////////////////////////////////////////
     int delete_file(const char *group_name, const char *remote_filename);
 
     //////////////////////////////////////////////////////////////////////////
-    //功能：获取所有组信息
+    //功能：list all groups
     //参数：
     //      BufferInfo* group_info OUT 所有组信息
 
     // 返回：0:成功 否则失败。
     //////////////////////////////////////////////////////////////////////////
 
-    int list_all_groups(BufferInfo *group_info);
+    int list_groups(BufferInfo *group_info);
 
     //////////////////////////////////////////////////////////////////////////
-    //功能：获取指定组信息
+    //功能：list one group
     //参数：
-    //		const char* group_name IN 组名 如：group1
+    //      const char* group_name IN 组名 如：group1
     //      BufferInfo* group_info OUT 所有组信息
 
     // 返回：0:成功 否则失败。
@@ -178,18 +177,17 @@ extern "C" {
     int list_one_group(const char *group_name, BufferInfo *group_info);
 
     //////////////////////////////////////////////////////////////////////////
-    //功能：获取storage信息
+    //功能：list all servers of the specified group
     //参数：
-    //		const char* group_name IN 组名 如：group1
-    //		const char* storage_id IN 组名 如：storage ip
+    //      const char* group_name IN 组名 如：group1
+    //      const char* storage_id IN 组名 如：storage ip
     //      BufferInfo* storages_info OUT 存储信息
 
     // 返回：0:成功 否则失败。
     //////////////////////////////////////////////////////////////////////////
 
-    int list_storages(const char *group_name,
-            const char *storage_id,
-            BufferInfo *storages_info);
+    int list_servers(const char *group_name, const char *storage_id,
+            BufferInfo *storages_infos);
 #ifdef __cplusplus
 }
 #endif

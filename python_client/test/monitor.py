@@ -1,30 +1,57 @@
-import sys
-import os
-import FDFSPythonClient
+import FDFSPythonClient as fdfs
 import time
+import sys
 
-sys.path.append(os.getcwd())
+r = fdfs.init('/etc/fdfs/client.conf', log_level=7, log_fd=sys.stderr.fileno())
 
-o = FDFSPythonClient.fdfs_init("/etc/fdfs/client.conf", 7)
+if r != 0:
+    exit()
 
-r = FDFSPythonClient.list_all_groups()[1]
-#g = FDFSPythonClient.list_one_group("group2")
-s = FDFSPythonClient.list_storages("group1", "")[1]
-#t = FDFSPythonClient.list_storages("group2","127.0.0.1")
-'''
-print (time.time() - lastTime)*1000
-print r
-print g
-print "##########################################"
-print s
-print "##########################################"
-print t
-'''
-print(r)
-print(s)
-'''
 print("##########################################")
-print(s)
+print('list_groups:')
+
+start = time.perf_counter()
+r = fdfs.list_groups()
+elapsed = time.perf_counter() - start
+
+print('Response Code:', r[0])
+print('Time Elapsed %f ms.' % (elapsed * 1000))
+
+if r[0] != 0:
+    exit()
+
+print(r[1])
+
 print("##########################################")
-print(t)
-'''
+print('list_one_group:')
+
+start = time.perf_counter()
+r = fdfs.list_one_group('group1')
+elapsed = time.perf_counter() - start
+
+print('Response Code:', r[0])
+print('Time Elapsed %f ms.' % (elapsed * 1000))
+
+if r[0] != 0:
+    exit()
+
+print(r[1])
+
+print("##########################################")
+print('list_servers:')
+
+start = time.perf_counter()
+r = fdfs.list_servers('group1', '')
+elapsed = time.perf_counter() - start
+
+print('Response Code:', r[0])
+print('Time Elapsed %f ms.' % (elapsed * 1000))
+
+if r[0] != 0:
+    exit()
+
+print(r[1])
+
+print("##########################################")
+
+fdfs.destory()
