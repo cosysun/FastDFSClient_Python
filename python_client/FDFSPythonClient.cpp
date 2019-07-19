@@ -1,5 +1,9 @@
-#include "FDFSClient.h"
 #include "FDFSPythonClient.h"
+
+#include <Python.h>
+#include "fastcommon/logger.h"
+
+#include "FDFSClient.h"
 
 ////////////////////////////// Python 与 C++ 接口 //////////////////////////////
 
@@ -166,19 +170,13 @@ static struct PyModuleDef FDFSModuleDef = {
 
 PyMODINIT_FUNC PyInit_FDFSPythonClient(void) {
     //初始模块
-    PyObject *m = PyModule_Create(&FDFSModuleDef);
-    if (m == NULL)
-        INITERROR;
-    return m;
+    return PyModule_Create(&FDFSModuleDef);
 }
 #else
 
 PyMODINIT_FUNC initFDFSPythonClient(void) {
     //初始模块
-    PyObject *m = Py_InitModule("FDFSPythonClient", FDFSMethods);
-    if (m == NULL)
-        INITERROR;
-    return;
+    (void) Py_InitModule("FDFSPythonClient", FDFSMethods);
 }
 #endif
 
