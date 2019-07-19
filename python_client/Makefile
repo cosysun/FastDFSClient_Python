@@ -1,6 +1,6 @@
 COMPILE = g++ -Wall -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -g -O1 -DDEBUG_FLAG -DOS_LINUX -DIOEVENT_USE_EPOLL
 INC_PATH = -I/usr/include -I/usr/include/python3.6m
-LIB_PATH = -L/usr/lib -ljsoncpp -lfastcommon -lfdfsclient
+LIB_PATH = -L/usr/lib -lfastcommon -lfdfsclient
 TARGET_LIB = /usr/local/lib/python3.6/dist-packages
 
 FDFS_SHARED_OBJS = FDFSPythonClient.lo FDFSClient.lo

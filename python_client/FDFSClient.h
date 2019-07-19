@@ -1,10 +1,7 @@
 #ifndef FDFSCLIENT_H
 #define FDFSCLIENT_H
 
-#include "fastcommon/logger.h"
-#include "fastcommon/sockopt.h"
 #include "fastdfs/fdfs_global.h"
-#include "fastdfs/fdfs_client.h"
 
 class CFDFSClient {
 public:

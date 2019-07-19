@@ -6,26 +6,52 @@
 
 1. 安装`libfastcommon`与`fastdfs`环境
 
-2. 安装`python3-dev`与`libjsoncpp-dev`依赖
+2. 安装`python3-dev`依赖
 
    ```bash
-   apt install -y python3-dev libjsoncpp-dev g++
+   apt install -y python3-dev
    ```
 
-   - 其中，`python3-dev`提供`Python.h`文件，`libjsoncpp-dev`提供`jsoncpp/json/json.h`与`libjsoncpp.so`文件。
-
-   - 另外，由于我们使用的`libjsoncpp.so`是**Ubuntu Developers**维护的版本，故需用匹配的`g++`版本进行编译连接，否则会出现连接符号不一致的情况：
-
-     ```diff
-     -000000000002bc9e T _ZNK4Json5Value14toStyledStringEv
-     +000000000001a7d0 T _ZNK4Json5Value14toStyledStringB5cxx11Ev
-     ```
+   - 其中，`python3-dev`提供`Python.h`文件。
 
 3. 编译生成`FDFSPythonClient.so`文件
 
-详细说明文档请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 [Wiki](https://github.com/lengyanyu258/FastDFSClient_Python/wiki)
+一种可能的编译步骤：
+
+```bash
+sudo apt install git make gcc-4.8 -y
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 40
+
+# install libfastcommon
+cd /usr/local/src/
+sudo git clone https://github.com/happyfish100/libfastcommon.git --depth 1
+cd libfastcommon/
+sudo ./make.sh && sudo ./make.sh install
+
+# install fastdfs
+cd ../
+sudo git clone https://github.com/happyfish100/fastdfs.git --depth 1
+cd fastdfs/
+sudo ./make.sh && sudo ./make.sh install
+
+# install FastDFS Python Client
+sudo apt install python3-dev g++-4.8 -y
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 40
+
+cd ../
+sudo git clone https://github.com/lengyanyu258/FastDFSClient_Python.git --depth 1
+cd FastDFSClient_Python/python_client
+sudo make install
+```
+
+详细说明请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 [接口说明文档](./Interfaces.md)。
 
 ### Revision History
+
+- 2019.7.19 ver 3.0.0
+  - 移除了对`jsoncpp`的依赖
+  - 更新了`list_groups`、`list_one_group`和`list_servers`方法。
 
 - 2019.7.3 ver 2.2.2
   - 完善了错误日志输出信息
