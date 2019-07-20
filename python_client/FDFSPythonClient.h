@@ -4,6 +4,7 @@
 #include "fastdfs/fdfs_global.h"
 
 //错误码
+
 enum FSC_CODE {
     FSC_ERROR_CODE_NONE = 0, //没有错误
     FSC_ERROR_CODE_INIT_FAILED, //初始化失败
@@ -49,7 +50,7 @@ extern "C" {
             int nLogLevel, int nLogFD, bool bLogTakeOverStd);
 
     // 销毁fdfs客户端
-    int destory();
+    int destroy();
 
     //////////////////////////////////////////////////////////////////////////
     //功能：上传普通文件

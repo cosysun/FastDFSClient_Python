@@ -26,8 +26,8 @@ static PyObject *wrap_init(PyObject *self, PyObject *args, PyObject *kw) {
     return Py_BuildValue("i", nRes);
 }
 
-static PyObject *wrap_destory(PyObject *self, PyObject *args) {
-    int nRes = destory();
+static PyObject *wrap_destroy(PyObject *self, PyObject *args) {
+    int nRes = destroy();
     return Py_BuildValue("i", nRes);
 }
 
@@ -144,7 +144,7 @@ static PyObject *wrap_list_servers(PyObject *self, PyObject *args) {
 static PyMethodDef FDFSMethods[] = {
     //python中注册的函数名
     {"init", (PyCFunction) wrap_init, METH_VARARGS | METH_KEYWORDS, NULL},
-    {"destory", wrap_destory, METH_VARARGS, NULL},
+    {"destroy", wrap_destroy, METH_VARARGS, NULL},
     {"upload_file", wrap_upload_file, METH_VARARGS, NULL},
     {"upload_appender", wrap_upload_appender, METH_VARARGS, NULL},
     {"append_file", wrap_append_file, METH_VARARGS, NULL},
@@ -185,17 +185,17 @@ CFDFSClient *g_pClient = NULL;
 
 int init(const char *sConfig,
         int nLogLevel, int nLogFD, bool bLogTakeOverStd) {
-    destory();
+    destroy();
     g_pClient = new CFDFSClient();
 
     int nResult = g_pClient->init(sConfig, nLogLevel, nLogFD, bLogTakeOverStd);
     if (nResult != 0)
-        destory();
+        destroy();
 
     return nResult;
 }
 
-int destory() {
+int destroy() {
     if (g_pClient != NULL) {
         delete g_pClient;
         g_pClient = NULL;
