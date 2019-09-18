@@ -13,31 +13,31 @@ public:
             int nLogLevel, int nLogFD, bool bLogTakeOverStd);
 
     // 上传普通文件
-    int upload_file(const char *file_buff,
-            const char *file_ext_name, int file_size, int &name_size,
-            char *&remote_file_name);
+    int upload_file(const char *file_buff, int64_t file_size,
+            const char *file_ext_name, char *&remote_file_name, int &name_size);
 
     // 上传追加类型文件
-    int upload_appender(const char *file_buff,
-            const char *file_ext_name, int file_size, int &name_size,
-            char *&remote_file_name);
+    int upload_appender(const char *file_buff, int64_t file_size,
+            const char *file_ext_name, char *&remote_file_name, int &name_size);
 
     // 向追加类型文件追加上传
-    int append_file(const char *file_buff, int file_size,
+    int append_file(const char *file_buff, int64_t file_size,
             const char *appender_filename);
 
     // slave文件上传
-    int upload_slave(const char *file_buff,
+    int upload_slave(const char *file_buff, int64_t file_size,
             const char *master_filename, const char *prefix_name,
-            const char *file_ext_name, int file_size, int &name_size,
-            char *&remote_file_name);
+            const char *file_ext_name, char *&remote_file_name, int &name_size);
 
     // 下载文件
-    int download_file(BufferInfo *pBuff,
-            const char *group_name, const char *remote_filename);
+    int download_file(const char *group_name, const char *remote_filename,
+            BufferInfo *pBuff);
 
     // 删除
     int delete_file(const char *group_name, const char *remote_filename);
+
+    // 获取文件信息
+    int get_file_info(const char *file_id, BufferInfo *file_info);
 
     // list all groups
     int list_groups(BufferInfo *group_info);

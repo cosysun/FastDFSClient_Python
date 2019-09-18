@@ -17,9 +17,7 @@ void init_json_array(json_array_t *array, int n) {
     array->count = array->alloc = n;
     array->element_size = sizeof (string_t);
     array->elements = new string_t[array->count];
-    for (int i = 0; i < array->count; ++i) {
-        memset(&array->elements[i], 0, sizeof (array->elements[i]));
-    }
+    memset(array->elements, 0, array->count * array->element_size);
 }
 
 void free_json_array(json_array_t *array, int n) {
@@ -37,9 +35,7 @@ void init_json_map(json_map_t *map, int n) {
     map->count = map->alloc = n;
     map->element_size = sizeof (key_value_pair_t);
     map->elements = new key_value_pair_t[map->count];
-    for (int i = 0; i < map->count; ++i) {
-        memset(&map->elements[i], 0, sizeof (map->elements[i]));
-    }
+    memset(map->elements, 0, map->count * map->element_size);
 }
 
 void free_json_map(json_map_t *map, int n) {
@@ -69,8 +65,8 @@ void assign_json_map(key_value_pair_t &kv_pair, const char *key,
 
 CFDFSClient::CFDFSClient(void) {
     memset(&m_RecvBufferInfo, 0, sizeof (m_RecvBufferInfo));
-    m_pRemoteFileName = new char[MAX_REMOTE_FILE_NAME_SIZE * sizeof (char)];
-    memset(m_pRemoteFileName, 0, MAX_REMOTE_FILE_NAME_SIZE - 1);
+    m_pRemoteFileName = new char[MAX_REMOTE_FILE_NAME_SIZE];
+    memset(m_pRemoteFileName, 0, MAX_REMOTE_FILE_NAME_SIZE * sizeof (char));
 }
 
 CFDFSClient::~CFDFSClient(void) {
@@ -133,9 +129,8 @@ int CFDFSClient::init(const char *sFDFSConfig,
     return result;
 }
 
-int CFDFSClient::upload_file(const char *file_buff,
-        const char *file_ext_name, int file_size, int &name_size,
-        char *&remote_file_name) {
+int CFDFSClient::upload_file(const char *file_buff, int64_t file_size,
+        const char *file_ext_name, char *&remote_file_name, int &name_size) {
     int result = 0;
     ConnectionInfo *pTrackerServer = tracker_get_connection();
     if (pTrackerServer == NULL) {
@@ -147,7 +142,7 @@ int CFDFSClient::upload_file(const char *file_buff,
     }
 
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
-    char remote_filename[256];
+    char remote_filename[BUFF_SIZE];
 
     int store_path_index;
     ConnectionInfo storageServer;
@@ -179,11 +174,9 @@ int CFDFSClient::upload_file(const char *file_buff,
                 " group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        int nNameSize = snprintf(m_pRemoteFileName,
-                MAX_REMOTE_FILE_NAME_SIZE - 1,
+        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
                 "%s/%s", group_name, remote_filename);
         remote_file_name = m_pRemoteFileName;
-        name_size = nNameSize;
     }
 
     tracker_disconnect_server_ex(pStorageServer, true);
@@ -192,9 +185,8 @@ int CFDFSClient::upload_file(const char *file_buff,
     return result;
 }
 
-int CFDFSClient::upload_appender(const char *file_buff,
-        const char *file_ext_name, int file_size, int &name_size,
-        char *&remote_file_name) {
+int CFDFSClient::upload_appender(const char *file_buff, int64_t file_size,
+        const char *file_ext_name, char *&remote_file_name, int &name_size) {
     int result = 0;
     ConnectionInfo *pTrackerServer = tracker_get_connection();
     if (pTrackerServer == NULL) {
@@ -206,7 +198,7 @@ int CFDFSClient::upload_appender(const char *file_buff,
     }
 
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
-    char remote_filename[256];
+    char remote_filename[BUFF_SIZE];
 
     int store_path_index;
     ConnectionInfo storageServer;
@@ -238,11 +230,9 @@ int CFDFSClient::upload_appender(const char *file_buff,
                 " fail, group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        int nNameSize = snprintf(m_pRemoteFileName,
-                MAX_REMOTE_FILE_NAME_SIZE - 1,
+        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
                 "%s/%s", group_name, remote_filename);
         remote_file_name = m_pRemoteFileName;
-        name_size = nNameSize;
     }
 
     tracker_disconnect_server_ex(pStorageServer, true);
@@ -251,7 +241,7 @@ int CFDFSClient::upload_appender(const char *file_buff,
     return result;
 }
 
-int CFDFSClient::append_file(const char *file_buff, int file_size,
+int CFDFSClient::append_file(const char *file_buff, int64_t file_size,
         const char *appender_filename) {
     int result = 0;
     ConnectionInfo *pTrackerServer = tracker_get_connection();
@@ -302,10 +292,9 @@ int CFDFSClient::append_file(const char *file_buff, int file_size,
     return result;
 }
 
-int CFDFSClient::upload_slave(const char *file_content,
+int CFDFSClient::upload_slave(const char *file_content, int64_t file_size,
         const char *master_filename, const char *prefix_name,
-        const char *file_ext_name, int file_size, int &name_size,
-        char *&remote_file_name) {
+        const char *file_ext_name, char *&remote_file_name, int &name_size) {
     int result = 0;
     ConnectionInfo *pTrackerServer = tracker_get_connection();
     if (pTrackerServer == NULL) {
@@ -317,7 +306,7 @@ int CFDFSClient::upload_slave(const char *file_content,
     }
 
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
-    char remote_filename[256];
+    char remote_filename[BUFF_SIZE];
 
     int store_path_index;
     ConnectionInfo storageServer;
@@ -358,11 +347,9 @@ int CFDFSClient::upload_slave(const char *file_content,
                 " group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        int nNameSize = snprintf(m_pRemoteFileName,
-                MAX_REMOTE_FILE_NAME_SIZE - 1,
+        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
                 "%s/%s", group_name, remote_filename);
         remote_file_name = m_pRemoteFileName;
-        name_size = nNameSize;
     }
 
     tracker_disconnect_server_ex(pStorageServer, true);
@@ -371,8 +358,8 @@ int CFDFSClient::upload_slave(const char *file_content,
     return result;
 }
 
-int CFDFSClient::download_file(BufferInfo *pBuff,
-        const char *group_name, const char *remote_filename) {
+int CFDFSClient::download_file(const char *group_name, const char *remote_filename,
+        BufferInfo *pBuff) {
     char *file_buff = NULL;
     int64_t file_size = 0;
     int result = 0;
@@ -493,6 +480,58 @@ int CFDFSClient::delete_file(const char *group_name,
     return result;
 }
 
+int CFDFSClient::get_file_info(const char *file_id, BufferInfo *file_info) {
+    int result = 0;
+    FDFSFileInfo info;
+
+    if ((result = fdfs_get_file_info1(file_id, &info)) != 0) {
+        logError("CFDFSClient::get_file_info() fdfs_get_file_info1 fail,"
+                " error no: %d, error info: %s", result, STRERROR(result));
+        return result;
+    }
+
+    tracker_close_all_connections();
+
+    json_map_t info_value;
+    char error_info[BUFF_SIZE];
+
+    init_json_map(&info_value, 5);
+
+    assign_json_map(info_value.elements[0], "create_timestamp", "%s",
+            formatDatetime(info.create_timestamp,
+            "%Y-%m-%d %H:%M:%S", NULL, BUFF_SIZE));
+    assign_json_map(info_value.elements[1], "crc32",
+            "%u", info.crc32);
+    assign_json_map(info_value.elements[2], "source_id",
+            "%d", info.source_id);
+    assign_json_map(info_value.elements[3], "file_size",
+            "%" PRId64, info.file_size);
+    assign_json_map(info_value.elements[4], "source_ip_addr",
+            "%s", info.source_ip_addr);
+
+    string_t output;
+
+    if ((result = encode_json_map(&info_value, &output,
+            error_info, sizeof (error_info))) != 0) {
+        logError("CFDFSClient::get_file_info() encode_json_map fail,"
+                " error no: %d, error info: %s", result, error_info);
+
+        free_json_map(&info_value, info_value.count);
+
+        return result;
+    }
+
+    free_json_map(&info_value, info_value.count);
+
+    buffer_memcpy(&m_RecvBufferInfo, output.str, output.len);
+
+    free_json_string(&output);
+
+    *file_info = m_RecvBufferInfo;
+
+    return result;
+}
+
 int CFDFSClient::list_groups(BufferInfo *group_info) {
     int result = 0;
     ConnectionInfo *pTrackerServer = tracker_get_connection();
@@ -509,9 +548,10 @@ int CFDFSClient::list_groups(BufferInfo *group_info) {
     FDFSGroupStat group_stats[FDFS_MAX_GROUPS];
     result = tracker_list_groups(pTrackerServer,
             group_stats, FDFS_MAX_GROUPS, &group_count);
-    if (result != 0) {
-        tracker_disconnect_server_ex(pTrackerServer, true);
 
+    tracker_disconnect_server_ex(pTrackerServer, true);
+
+    if (result != 0) {
         logError("CFDFSClient::list_groups() tracker_list_groups fail,"
                 " error no: %d, error info: %s", result, STRERROR(result));
 
@@ -529,11 +569,11 @@ int CFDFSClient::list_groups(BufferInfo *group_info) {
         assign_json_map(info.elements[0], "group_name",
                 "%s", group_stats[n].group_name);
         assign_json_map(info.elements[1], "total_mb",
-                "%"PRId64"", group_stats[n].total_mb);
+                "%" PRId64, group_stats[n].total_mb);
         assign_json_map(info.elements[2], "free_mb",
-                "%"PRId64"", group_stats[n].free_mb);
+                "%" PRId64, group_stats[n].free_mb);
         assign_json_map(info.elements[3], "trunk_free_mb",
-                "%"PRId64"", group_stats[n].trunk_free_mb);
+                "%" PRId64, group_stats[n].trunk_free_mb);
         assign_json_map(info.elements[4], "count",
                 "%d", group_stats[n].count);
         assign_json_map(info.elements[5], "storage_port",
@@ -583,8 +623,6 @@ int CFDFSClient::list_groups(BufferInfo *group_info) {
 
     *group_info = m_RecvBufferInfo;
 
-    tracker_disconnect_server_ex(pTrackerServer, true);
-
     return result;
 }
 
@@ -604,9 +642,10 @@ int CFDFSClient::list_one_group(const char *group_name,
     }
 
     result = tracker_list_one_group(pTrackerServer, group_name, &group_stat);
-    if (result != 0) {
-        tracker_disconnect_server_ex(pTrackerServer, true);
 
+    tracker_disconnect_server_ex(pTrackerServer, true);
+
+    if (result != 0) {
         logError("CFDFSClient::list_one_group() tracker_list_one_group fail,"
                 " error no: %d, error info: %s", result, STRERROR(result));
 
@@ -621,11 +660,11 @@ int CFDFSClient::list_one_group(const char *group_name,
     assign_json_map(groups_value.elements[0], "group_name",
             "%s", group_stat.group_name);
     assign_json_map(groups_value.elements[1], "total_mb",
-            "%"PRId64"", group_stat.total_mb);
+            "%" PRId64, group_stat.total_mb);
     assign_json_map(groups_value.elements[2], "free_mb",
-            "%"PRId64"", group_stat.free_mb);
+            "%" PRId64, group_stat.free_mb);
     assign_json_map(groups_value.elements[3], "trunk_free_mb",
-            "%"PRId64"", group_stat.trunk_free_mb);
+            "%" PRId64, group_stat.trunk_free_mb);
     assign_json_map(groups_value.elements[4], "count",
             "%d", group_stat.count);
     assign_json_map(groups_value.elements[5], "storage_port",
@@ -663,8 +702,6 @@ int CFDFSClient::list_one_group(const char *group_name,
 
     *group_info = m_RecvBufferInfo;
 
-    tracker_disconnect_server_ex(pTrackerServer, true);
-
     return result;
 }
 
@@ -690,9 +727,10 @@ int CFDFSClient::list_servers(const char *group_name,
             group_name, storage_id,
             storage_infos, FDFS_MAX_SERVERS_EACH_GROUP,
             &storage_count);
-    if (result != 0) {
-        tracker_disconnect_server_ex(pTrackerServer, true);
 
+    tracker_disconnect_server_ex(pTrackerServer, true);
+
+    if (result != 0) {
         logError("CFDFSClient::list_servers() tracker_list_servers fail,"
                 " error no: %d, error info: %s", result, STRERROR(result));
 
@@ -748,81 +786,81 @@ int CFDFSClient::list_servers(const char *group_name,
         pStorageStat = &(storage_infos[n].stat);
 
         assign_json_map(info.elements[17], "total_upload_count",
-                "%"PRId64"", pStorageStat->total_upload_count);
+                "%" PRId64, pStorageStat->total_upload_count);
         assign_json_map(info.elements[18], "success_upload_count",
-                "%"PRId64"", pStorageStat->success_upload_count);
+                "%" PRId64, pStorageStat->success_upload_count);
         assign_json_map(info.elements[19], "total_append_count",
-                "%"PRId64"", pStorageStat->total_append_count);
+                "%" PRId64, pStorageStat->total_append_count);
         assign_json_map(info.elements[20], "success_append_count",
-                "%"PRId64"", pStorageStat->success_append_count);
+                "%" PRId64, pStorageStat->success_append_count);
         assign_json_map(info.elements[21], "total_modify_count",
-                "%"PRId64"", pStorageStat->total_modify_count);
+                "%" PRId64, pStorageStat->total_modify_count);
         assign_json_map(info.elements[22], "success_modify_count",
-                "%"PRId64"", pStorageStat->success_modify_count);
+                "%" PRId64, pStorageStat->success_modify_count);
         assign_json_map(info.elements[23], "total_truncate_count",
-                "%"PRId64"", pStorageStat->total_truncate_count);
+                "%" PRId64, pStorageStat->total_truncate_count);
         assign_json_map(info.elements[24], "success_truncate_count",
-                "%"PRId64"", pStorageStat->success_truncate_count);
+                "%" PRId64, pStorageStat->success_truncate_count);
         assign_json_map(info.elements[25], "total_set_meta_count",
-                "%"PRId64"", pStorageStat->total_set_meta_count);
+                "%" PRId64, pStorageStat->total_set_meta_count);
         assign_json_map(info.elements[26], "success_set_meta_count",
-                "%"PRId64"", pStorageStat->success_set_meta_count);
+                "%" PRId64, pStorageStat->success_set_meta_count);
         assign_json_map(info.elements[27], "total_delete_count",
-                "%"PRId64"", pStorageStat->total_delete_count);
+                "%" PRId64, pStorageStat->total_delete_count);
         assign_json_map(info.elements[28], "success_delete_count",
-                "%"PRId64"", pStorageStat->success_delete_count);
+                "%" PRId64, pStorageStat->success_delete_count);
         assign_json_map(info.elements[29], "total_download_count",
-                "%"PRId64"", pStorageStat->total_download_count);
+                "%" PRId64, pStorageStat->total_download_count);
         assign_json_map(info.elements[30], "success_download_count",
-                "%"PRId64"", pStorageStat->success_download_count);
+                "%" PRId64, pStorageStat->success_download_count);
         assign_json_map(info.elements[31], "total_get_meta_count",
-                "%"PRId64"", pStorageStat->total_get_meta_count);
+                "%" PRId64, pStorageStat->total_get_meta_count);
         assign_json_map(info.elements[32], "success_get_meta_count",
-                "%"PRId64"", pStorageStat->success_get_meta_count);
+                "%" PRId64, pStorageStat->success_get_meta_count);
         assign_json_map(info.elements[33], "total_create_link_count",
-                "%"PRId64"", pStorageStat->total_create_link_count);
+                "%" PRId64, pStorageStat->total_create_link_count);
         assign_json_map(info.elements[34], "success_create_link_count",
-                "%"PRId64"", pStorageStat->success_create_link_count);
+                "%" PRId64, pStorageStat->success_create_link_count);
         assign_json_map(info.elements[35], "total_delete_link_count",
-                "%"PRId64"", pStorageStat->total_delete_link_count);
+                "%" PRId64, pStorageStat->total_delete_link_count);
         assign_json_map(info.elements[36], "success_delete_link_count",
-                "%"PRId64"", pStorageStat->success_delete_link_count);
+                "%" PRId64, pStorageStat->success_delete_link_count);
         assign_json_map(info.elements[37], "total_upload_bytes",
-                "%"PRId64"", pStorageStat->total_upload_bytes);
+                "%" PRId64, pStorageStat->total_upload_bytes);
         assign_json_map(info.elements[38], "success_upload_bytes",
-                "%"PRId64"", pStorageStat->success_upload_bytes);
+                "%" PRId64, pStorageStat->success_upload_bytes);
         assign_json_map(info.elements[39], "total_append_bytes",
-                "%"PRId64"", pStorageStat->total_append_bytes);
+                "%" PRId64, pStorageStat->total_append_bytes);
         assign_json_map(info.elements[40], "success_append_bytes",
-                "%"PRId64"", pStorageStat->success_append_bytes);
+                "%" PRId64, pStorageStat->success_append_bytes);
         assign_json_map(info.elements[41], "total_modify_bytes",
-                "%"PRId64"", pStorageStat->total_modify_bytes);
+                "%" PRId64, pStorageStat->total_modify_bytes);
         assign_json_map(info.elements[42], "success_modify_bytes",
-                "%"PRId64"", pStorageStat->success_modify_bytes);
+                "%" PRId64, pStorageStat->success_modify_bytes);
         assign_json_map(info.elements[43], "total_download_bytes",
-                "%"PRId64"", pStorageStat->total_download_bytes);
+                "%" PRId64, pStorageStat->total_download_bytes);
         assign_json_map(info.elements[44], "success_download_bytes",
-                "%"PRId64"", pStorageStat->success_download_bytes);
+                "%" PRId64, pStorageStat->success_download_bytes);
         assign_json_map(info.elements[45], "total_sync_in_bytes",
-                "%"PRId64"", pStorageStat->total_sync_in_bytes);
+                "%" PRId64, pStorageStat->total_sync_in_bytes);
         assign_json_map(info.elements[46], "success_sync_in_bytes",
-                "%"PRId64"", pStorageStat->success_sync_in_bytes);
+                "%" PRId64, pStorageStat->success_sync_in_bytes);
         assign_json_map(info.elements[47], "total_sync_out_bytes",
-                "%"PRId64"", pStorageStat->total_sync_out_bytes);
+                "%" PRId64, pStorageStat->total_sync_out_bytes);
         assign_json_map(info.elements[48], "success_sync_out_bytes",
-                "%"PRId64"", pStorageStat->success_sync_out_bytes);
+                "%" PRId64, pStorageStat->success_sync_out_bytes);
         assign_json_map(info.elements[49], "total_file_open_count",
-                "%"PRId64"", pStorageStat->total_file_open_count);
+                "%" PRId64, pStorageStat->total_file_open_count);
         assign_json_map(info.elements[50], "success_file_open_count",
-                "%"PRId64"", pStorageStat->success_file_open_count);
+                "%" PRId64, pStorageStat->success_file_open_count);
         assign_json_map(info.elements[51], "total_file_read_count",
-                "%"PRId64"", pStorageStat->total_file_read_count);
+                "%" PRId64, pStorageStat->total_file_read_count);
         assign_json_map(info.elements[52], "success_file_read_count",
-                "%"PRId64"", pStorageStat->success_file_read_count);
+                "%" PRId64, pStorageStat->success_file_read_count);
         assign_json_map(info.elements[53], "total_file_write_count",
-                "%"PRId64"", pStorageStat->total_file_write_count);
+                "%" PRId64, pStorageStat->total_file_write_count);
         assign_json_map(info.elements[54], "success_file_write_count",
-                "%"PRId64"", pStorageStat->success_file_write_count);
+                "%" PRId64, pStorageStat->success_file_write_count);
         assign_json_map(info.elements[55], "last_source_update", "%s",
                 formatDatetime(pStorageStat->last_source_update,
                 "%Y-%m-%d %H:%M:%S", NULL, BUFF_SIZE));
@@ -873,8 +911,6 @@ int CFDFSClient::list_servers(const char *group_name,
     free_json_string(&output);
 
     *storages_infos = m_RecvBufferInfo;
-
-    tracker_disconnect_server_ex(pTrackerServer, true);
 
     return result;
 }

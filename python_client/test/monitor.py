@@ -54,4 +54,4 @@ print(r[1])
 
 print("##########################################")
 
-fdfs.destory()
+fdfs.destroy()

@@ -2,19 +2,13 @@
 
 ### How to Compile
 
-编译环境：`Ubuntu 18.04`，以下步骤仅供参考。
+编译环境：`Ubuntu 18.04`，以下步骤仅供参考：
 
-1. 安装`libfastcommon`与`fastdfs`环境
+1. 安装`libfastcommon`与`fastdfs`环境；
 
-2. 安装`python3-dev`依赖
+2. 安装`python3-dev`依赖（提供`Python.h`文件）；
 
-   ```bash
-   apt install -y python3-dev
-   ```
-
-   - 其中，`python3-dev`提供`Python.h`文件。
-
-3. 编译生成`FDFSPythonClient.so`文件
+3. 编译生成`FDFSPythonClient.so`文件。
 
 一种可能的编译步骤：
 
@@ -40,14 +34,20 @@ sudo apt install python3-dev g++-4.8 -y
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 40
 
 cd ../
-sudo git clone https://github.com/lengyanyu258/FastDFSClient_Python.git --depth 1
+sudo git clone https://github.com/cosysun/FastDFSClient_Python.git --depth 1
 cd FastDFSClient_Python/python_client
 sudo make install
 ```
 
-详细说明请看：[FastDFS客户端(Python版)指南](https://blog.csdn.net/lenyusun/article/details/44057139) 或 [接口说明文档](./Interfaces.md)。
+详细说明请看：[《FastDFS客户端(Python版)指南》](https://blog.csdn.net/lenyusun/article/details/44057139) 或[《接口说明文档》](./Interfaces.md)。
 
 ### Revision History
+
+- 2019.9.18 ver 3.1.0
+  - 增加了`get_file_info`接口
+
+- 2019.7.20 ver 3.0.1
+  - 修复了拼写错误：`destory`→`destroy`
 
 - 2019.7.19 ver 3.0.0
   - 移除了对`jsoncpp`的依赖
@@ -71,10 +71,12 @@ sudo make install
   - 移除了对`Python 2`的支持
   - 移除了对`jsoncpp`自行编译的依赖
   - 完善了对`Python 3.6`的编译依赖
+
 - 2018.3.18 ver 1.2.0
   - 增加了对`python3.6`的支持
+
 - 2015.4.13 ver 1.1.0
   - 增加了`slave_upload`接口
+
 - 2015.2.28 ver 1.0.0
   - 初始版本
-
