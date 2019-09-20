@@ -8,8 +8,8 @@
 
 #include "FDFSPythonClient.h"
 
-#define BUFF_SIZE                 256
-#define MAX_REMOTE_FILE_NAME_SIZE 100
+#define BUFF_SIZE                 128
+#define REMOTE_FILE_NAME_MAX_SIZE FDFS_GROUP_NAME_MAX_LEN + BUFF_SIZE
 #define CLIENT_ERROR_LOG_FILENAME "cliented"
 
 void init_json_array(json_array_t *array, int n) {
@@ -65,8 +65,8 @@ void assign_json_map(key_value_pair_t &kv_pair, const char *key,
 
 CFDFSClient::CFDFSClient(void) {
     memset(&m_RecvBufferInfo, 0, sizeof (m_RecvBufferInfo));
-    m_pRemoteFileName = new char[MAX_REMOTE_FILE_NAME_SIZE];
-    memset(m_pRemoteFileName, 0, MAX_REMOTE_FILE_NAME_SIZE * sizeof (char));
+    m_pRemoteFileName = new char[REMOTE_FILE_NAME_MAX_SIZE];
+    memset(m_pRemoteFileName, 0, REMOTE_FILE_NAME_MAX_SIZE * sizeof (char));
 }
 
 CFDFSClient::~CFDFSClient(void) {
@@ -166,6 +166,11 @@ int CFDFSClient::upload_file(const char *file_buff, int64_t file_size, const cha
         return result;
     }
 
+    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+        logWarning("CFDFSClient::upload_file() : file ext name length "
+                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+    }
+
     result = storage_upload_by_filebuff(pTrackerServer, pStorageServer,
             store_path_index, file_buff, file_size, file_ext_name, NULL, 0,
             group_name, remote_filename);
@@ -174,8 +179,8 @@ int CFDFSClient::upload_file(const char *file_buff, int64_t file_size, const cha
                 " group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
-                "%s/%s", group_name, remote_filename);
+        name_size = snprintf(m_pRemoteFileName, REMOTE_FILE_NAME_MAX_SIZE,
+                "%s%c%s", group_name, FDFS_FILE_ID_SEPERATOR, remote_filename);
         remote_file_name = m_pRemoteFileName;
     }
 
@@ -223,7 +228,15 @@ int CFDFSClient::upload_slave(const char *file_content, int64_t file_size,
         return result;
     }
 
-    // TODO: check name length defined in tracker_type.h
+    if (prefix_name != NULL && strlen(prefix_name) > FDFS_FILE_PREFIX_MAX_LEN) {
+        logWarning("CFDFSClient::upload_slave() : prefix name length "
+                "should <= %d !", FDFS_FILE_PREFIX_MAX_LEN);
+    }
+    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+        logWarning("CFDFSClient::upload_slave() : file ext name length "
+                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+    }
+
     result = storage_upload_slave_by_filebuff(pTrackerServer,
             pStorageServer, file_content, file_size,
             master_filename, prefix_name, file_ext_name,
@@ -236,12 +249,12 @@ int CFDFSClient::upload_slave(const char *file_content, int64_t file_size,
             group_name, remote_filename);
 
     if (result != 0) {
-        logError("CFDFSClient::upload_slave() upload file fail,"
+        logError("CFDFSClient::upload_slave() storage_upload_slave_by_filebuff fail,"
                 " group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
-                "%s/%s", group_name, remote_filename);
+        name_size = snprintf(m_pRemoteFileName, REMOTE_FILE_NAME_MAX_SIZE,
+                "%s%c%s", group_name, FDFS_FILE_ID_SEPERATOR, remote_filename);
         remote_file_name = m_pRemoteFileName;
     }
 
@@ -288,6 +301,11 @@ int CFDFSClient::upload_appender(const char *file_buff, int64_t file_size, const
         return result;
     }
 
+    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+        logWarning("CFDFSClient::upload_appender() : file ext name length "
+                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+    }
+
     result = storage_upload_appender_by_filebuff(pTrackerServer, pStorageServer,
             store_path_index, file_buff, file_size, file_ext_name, NULL, 0,
             group_name, remote_filename);
@@ -296,8 +314,8 @@ int CFDFSClient::upload_appender(const char *file_buff, int64_t file_size, const
                 " fail, group:%s, remote:%s, error no: %d, error info: %s",
                 group_name, remote_filename, result, STRERROR(result));
     } else {
-        name_size = snprintf(m_pRemoteFileName, MAX_REMOTE_FILE_NAME_SIZE,
-                "%s/%s", group_name, remote_filename);
+        name_size = snprintf(m_pRemoteFileName, REMOTE_FILE_NAME_MAX_SIZE,
+                "%s%c%s", group_name, FDFS_FILE_ID_SEPERATOR, remote_filename);
         remote_file_name = m_pRemoteFileName;
     }
 
