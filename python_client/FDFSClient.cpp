@@ -166,9 +166,11 @@ int CFDFSClient::upload_file(const char *file_buff, int64_t file_size, const cha
         return result;
     }
 
-    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+    if (file_ext_name != NULL &&
+            (result = strlen(file_ext_name)) > FDFS_FILE_EXT_NAME_MAX_LEN) {
         logWarning("CFDFSClient::upload_file() : file ext name length "
-                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+                "should <= %d !, however got %d : %s",
+                FDFS_FILE_EXT_NAME_MAX_LEN, result, file_ext_name);
     }
 
     result = storage_upload_by_filebuff(pTrackerServer, pStorageServer,
@@ -228,13 +230,17 @@ int CFDFSClient::upload_slave(const char *file_content, int64_t file_size,
         return result;
     }
 
-    if (prefix_name != NULL && strlen(prefix_name) > FDFS_FILE_PREFIX_MAX_LEN) {
+    if (prefix_name != NULL &&
+            (result = strlen(prefix_name)) > FDFS_FILE_PREFIX_MAX_LEN) {
         logWarning("CFDFSClient::upload_slave() : prefix name length "
-                "should <= %d !", FDFS_FILE_PREFIX_MAX_LEN);
+                "should <= %d !, however got %d : %s",
+                FDFS_FILE_PREFIX_MAX_LEN, result, prefix_name);
     }
-    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+    if (file_ext_name != NULL &&
+            (result = strlen(file_ext_name)) > FDFS_FILE_EXT_NAME_MAX_LEN) {
         logWarning("CFDFSClient::upload_slave() : file ext name length "
-                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+                "should <= %d !, however got %d : %s",
+                FDFS_FILE_EXT_NAME_MAX_LEN, result, file_ext_name);
     }
 
     result = storage_upload_slave_by_filebuff(pTrackerServer,
@@ -301,9 +307,11 @@ int CFDFSClient::upload_appender(const char *file_buff, int64_t file_size, const
         return result;
     }
 
-    if (file_ext_name != NULL && strlen(file_ext_name) > FDFS_FILE_EXT_NAME_MAX_LEN) {
+    if (file_ext_name != NULL &&
+            (result = strlen(file_ext_name)) > FDFS_FILE_EXT_NAME_MAX_LEN) {
         logWarning("CFDFSClient::upload_appender() : file ext name length "
-                "should <= %d !", FDFS_FILE_EXT_NAME_MAX_LEN);
+                "should <= %d !, however got %d : %s",
+                FDFS_FILE_EXT_NAME_MAX_LEN, result, file_ext_name);
     }
 
     result = storage_upload_appender_by_filebuff(pTrackerServer, pStorageServer,
