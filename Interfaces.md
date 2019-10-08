@@ -72,13 +72,13 @@ if r[0] != 0:
     logs = f.readlines()
     print(logs)
 
-r = fdfs.destory()	# pipe_w is closed now.
+r = fdfs.destroy()	# pipe_w is closed now.
 f.close()	# pipe_r is closed also.
 ```
 
 由于所有的接口都是有返回值的，所以建议对每个接口都进行赋值操作，避免不必要的标准输出。
 
-## 02. `destory()`
+## 02. `destroy()`
 
 |        | `destory` |       |                     |
 | ------ | --------- | ----- | ------------------- |
@@ -98,7 +98,21 @@ f.close()	# pipe_r is closed also.
 
 上传**普通类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png')`。
 
-## 04. `upload_appender(bytes, str)`
+## 04. `upload_slave(bytes, str, str, str)`
+
+|        | `upload_slave`               |              |                     |
+| ------ | ---------------------------- | ------------ | ------------------- |
+| IN     | file_buff                    | `bytes`      | 从文件的二进制内容  |
+|        | master_filename              | `str`        | 主文件的文件名      |
+|        | prefix_name                  | `str`        | 从文件的前缀名      |
+|        | file_ext_name                | `str`        | 从文件的扩展名      |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败 |
+
+上传主从文件中的**从文件**。
+
+一般来说，前缀名以下划线`_`开头。
+
+## 05. `upload_appender(bytes, str)`
 
 |        | `upload_appender`            |              |                      |
 | ------ | ---------------------------- | ------------ | -------------------- |
@@ -110,7 +124,7 @@ f.close()	# pipe_r is closed also.
 
 除接口名不同外，其他皆与`upload_file`一样。
 
-## 05. `append_file(bytes, str)`
+## 06. `append_file(bytes, str)`
 
 |        | `upload_appender` |         |                                  |
 | ------ | ----------------- | ------- | -------------------------------- |
@@ -121,20 +135,6 @@ f.close()	# pipe_r is closed also.
 向**追加类型**的文件追加上传文件。
 
 注意：`appender_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz1234.png`。
-
-## 06. `upload_slave(bytes, str, str, str)`
-
-|        | `upload_slave`               |              |                     |
-| ------ | ---------------------------- | ------------ | ------------------- |
-| IN     | file_buff                    | `bytes`      | 从文件的二进制内容  |
-|        | file_ext_name                | `str`        | 从文件的扩展名      |
-|        | master_filename              | `str`        | 主文件的文件名      |
-|        | prefix_name                  | `str`        | 从文件的前缀名      |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败 |
-
-上传主从文件中的**从文件**。
-
-一般来说，前缀名以下划线`_`开头。
 
 ## 07. `download_file(str, str)`
 
@@ -150,17 +150,31 @@ f.close()	# pipe_r is closed also.
 
 ## 08. `delete_file(str, str)`
 
-|        | `delete_file`         |                |                     |
-| ------ | --------------------- | -------------- | ------------------- |
-| IN     | group_name            | `str`          | 下载文件的存储组名  |
-|        | remote_filename       | `str`          | 下载文件的存储名    |
-| RETURN | (response, file_buff) | `(int, bytes)` | `0`为成功，否则失败 |
+|        | `delete_file`   |       |                     |
+| ------ | --------------- | ----- | ------------------- |
+| IN     | group_name      | `str` | 删除文件的存储组名  |
+|        | remote_filename | `str` | 删除文件的存储名    |
+| RETURN | response        | `int` | `0`为成功，否则失败 |
 
 删除文件。
 
 注意：`remote_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
 
-## 09. `list_groups()`
+## 09. `get_file_info(str)`
+
+|        | `get_file_info`       |              |                     |
+| ------ | --------------------- | ------------ | ------------------- |
+| IN     | file_id               | `str`        | 文件名              |
+| RETURN | (response, file_info) | `(int, str)` | `0`为成功，否则失败 |
+
+获取文件信息。
+
+注意：
+
+1. `file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
+2. 对于`appender`类型文件来说，其获取的`crc32`值不准确。
+
+## 10. `list_groups()`
 
 |        | `list_groups`           |              |                     |
 | ------ | ----------------------- | ------------ | ------------------- |
@@ -168,7 +182,7 @@ f.close()	# pipe_r is closed also.
 
 list all groups.
 
-## 10. `list_one_group(str)`
+## 11. `list_one_group(str)`
 
 |        | `list_one_group`       |              |                     |
 | ------ | ---------------------- | ------------ | ------------------- |
@@ -179,7 +193,7 @@ list one group.
 
 注意：`group_name`形如`group1`。
 
-## 11. `list_servers(str, str)`
+## 12. `list_servers(str, str)`
 
 |        | `list_servers`            |              |                                       |
 | ------ | ------------------------- | ------------ | ------------------------------------- |

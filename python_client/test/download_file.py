@@ -39,7 +39,7 @@ elapsed = time.perf_counter() - start
 print('Response Code:', r[0])
 print('Time Elapsed %f ms.' % (elapsed * 1000))
 
-fdfs.destory()
+fdfs.destroy()
 
 if r[0] == 0:
     with open(remote_filename.rsplit('/')[-1], 'wb') as f:
