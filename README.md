@@ -1,5 +1,7 @@
 # FastDFS Client for Python
 
+Server 版本：**5.12**
+
 ### How to Compile
 
 编译环境：`Ubuntu 18.04`，以下步骤仅供参考：
@@ -19,14 +21,16 @@ sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 40
 
 # install libfastcommon
 cd /usr/local/src/
-sudo git clone https://github.com/happyfish100/libfastcommon.git --depth 1
-cd libfastcommon/
+sudo wget https://github.com/happyfish100/libfastcommon/archive/V1.0.40.tar.gz
+sudo tar xf V1.0.40.tar.gz
+cd libfastcommon-1.0.40/
 sudo ./make.sh && sudo ./make.sh install
 
 # install fastdfs
 cd ../
-sudo git clone https://github.com/happyfish100/fastdfs.git --depth 1
-cd fastdfs/
+sudo wget https://github.com/happyfish100/fastdfs/archive/V5.12.tar.gz
+sudo tar xf V5.12.tar.gz
+cd fastdfs-5.12/
 sudo ./make.sh && sudo ./make.sh install
 
 # install FastDFS Python Client
