@@ -42,12 +42,11 @@ if r[0] != 0:
 print()
 print('Delete file:')
 
-group_name = r[1].split('/')[0]
-remote_filename = r[1][r[1].find('/') + 1:]
+remote_file_id = r[1]
 
 start = time.perf_counter()
 
-r = fdfs.delete_file(group_name, remote_filename)
+r = fdfs.delete_file(remote_file_id)
 
 elapsed = time.perf_counter() - start
 

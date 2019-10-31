@@ -55,8 +55,9 @@ sudo make install
 
 ### Revision History
 
-* 2019.10.31 ver 4.0.0
+* 2019.10.31 ver 4.1.0
   * 适配了`fastdfs 6.01`版本
+  * 升级了Python接口，无需将`file_id`分解为`group_name`和`file_name`。
 
 - 2019.9.18 ver 3.1.0
   - 增加了`get_file_info`接口

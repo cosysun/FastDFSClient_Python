@@ -39,34 +39,34 @@ static PyObject *wrap_upload_file(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "s#s", &sFileBuff, &nFileSize, &sFileExtName))
         return NULL;
 
-    char *pRemoteFilename;
+    char *pRemoteFileID;
     Py_ssize_t nNameSize = 0;
 
     int res = upload_file(sFileBuff, nFileSize, sFileExtName,
-            pRemoteFilename, (int &) nNameSize);
+            pRemoteFileID, (int &) nNameSize);
 
-    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
+    return Py_BuildValue("(i, s#)", res, pRemoteFileID, nNameSize);
 }
 
 static PyObject *wrap_upload_slave(PyObject *self, PyObject *args) {
     const char *sFileBuff;
-    const char *sMasterFilename;
+    const char *sMasterFileID;
     const char *sPrefixName;
     const char *sFileExtName;
     Py_ssize_t nFileSize = 0;
 
     if (!PyArg_ParseTuple(args, "s#sss", &sFileBuff, &nFileSize,
-            &sMasterFilename, &sPrefixName, &sFileExtName))
+            &sMasterFileID, &sPrefixName, &sFileExtName))
         return NULL;
 
-    char *pRemoteFilename;
+    char *pRemoteFileID;
     Py_ssize_t nNameSize = 0;
 
     int res = upload_slave(sFileBuff, nFileSize,
-            sMasterFilename, sPrefixName, sFileExtName,
-            pRemoteFilename, (int &) nNameSize);
+            sMasterFileID, sPrefixName, sFileExtName,
+            pRemoteFileID, (int &) nNameSize);
 
-    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
+    return Py_BuildValue("(i, s#)", res, pRemoteFileID, nNameSize);
 }
 
 static PyObject *wrap_upload_appender(PyObject *self, PyObject *args) {
@@ -77,13 +77,13 @@ static PyObject *wrap_upload_appender(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "s#s", &sFileBuff, &nFileSize, &sFileExtName))
         return NULL;
 
-    char *pRemoteFilename;
+    char *pRemoteFileID;
     Py_ssize_t nNameSize = 0;
 
     int res = upload_appender(sFileBuff, nFileSize, sFileExtName,
-            pRemoteFilename, (int &) nNameSize);
+            pRemoteFileID, (int &) nNameSize);
 
-    return Py_BuildValue("(i, s#)", res, pRemoteFilename, nNameSize);
+    return Py_BuildValue("(i, s#)", res, pRemoteFileID, nNameSize);
 }
 
 static PyObject *wrap_append_file(PyObject *self, PyObject *args) {
@@ -100,14 +100,13 @@ static PyObject *wrap_append_file(PyObject *self, PyObject *args) {
 }
 
 static PyObject *wrap_download_file(PyObject *self, PyObject *args) {
-    const char *sGroupName;
-    const char *sReomteFilename;
+    const char *sReomteFileID;
 
-    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sReomteFilename))
+    if (!PyArg_ParseTuple(args, "s", &sReomteFileID))
         return NULL;
 
     BufferInfo pBuff = {0};
-    int res = download_file(sGroupName, sReomteFilename, &pBuff);
+    int res = download_file(sReomteFileID, &pBuff);
 
 #if PY_MAJOR_VERSION >= 3
     return Py_BuildValue("(i, y#)", res, pBuff.buff, pBuff.length);
@@ -117,25 +116,24 @@ static PyObject *wrap_download_file(PyObject *self, PyObject *args) {
 }
 
 static PyObject *wrap_delete_file(PyObject *self, PyObject *args) {
-    const char *sGroupName;
-    const char *sReomteFilename;
+    const char *sReomteFileID;
 
-    if (!PyArg_ParseTuple(args, "ss", &sGroupName, &sReomteFilename))
+    if (!PyArg_ParseTuple(args, "s", &sReomteFileID))
         return NULL;
 
-    int res = delete_file(sGroupName, sReomteFilename);
+    int res = delete_file(sReomteFileID);
 
     return Py_BuildValue("i", res);
 }
 
 static PyObject *wrap_get_file_info(PyObject *self, PyObject *args) {
-    const char *sFileID;
+    const char *sReomteFileID;
 
-    if (!PyArg_ParseTuple(args, "s", &sFileID))
+    if (!PyArg_ParseTuple(args, "s", &sReomteFileID))
         return NULL;
 
     BufferInfo FileInfo = {0};
-    int res = get_file_info(sFileID, &FileInfo);
+    int res = get_file_info(sReomteFileID, &FileInfo);
 
     return Py_BuildValue("(i,s#)", res, FileInfo.buff, FileInfo.length);
 }
@@ -234,7 +232,7 @@ int destroy() {
 }
 
 int upload_file(const char *sFileBuff, int64_t nFileSize, const char *sFileExtName,
-        char *&pRemoteFilename, int &nNameSize) {
+        char *&pRemoteFileID, int &nNameSize) {
     if (sFileBuff == NULL || nFileSize == 0) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
@@ -243,12 +241,12 @@ int upload_file(const char *sFileBuff, int64_t nFileSize, const char *sFileExtNa
         return FSC_ERROR_CODE_INIT_FAILED;
 
     return g_pClient->upload_file(sFileBuff, nFileSize, sFileExtName,
-            pRemoteFilename, nNameSize);
+            pRemoteFileID, nNameSize);
 }
 
 int upload_slave(const char *sFileBuff, int64_t nFileSize,
-        const char *sMasterFilename, const char *sPrefixName, const char *sFileExtName,
-        char *&pRemoteFilename, int &nNameSize) {
+        const char *sMasterFileID, const char *sPrefixName, const char *sFileExtName,
+        char *&pRemoteFileID, int &nNameSize) {
     if (sFileBuff == NULL || nFileSize == 0) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
@@ -257,12 +255,12 @@ int upload_slave(const char *sFileBuff, int64_t nFileSize,
         return FSC_ERROR_CODE_INIT_FAILED;
 
     return g_pClient->upload_slave(sFileBuff, nFileSize,
-            sMasterFilename, sPrefixName, sFileExtName,
-            pRemoteFilename, nNameSize);
+            sMasterFileID, sPrefixName, sFileExtName,
+            pRemoteFileID, nNameSize);
 }
 
 int upload_appender(const char *sFileBuff, int64_t nFileSize, const char *sFileExtName,
-        char *&pRemoteFilename, int &nNameSize) {
+        char *&pRemoteFileID, int &nNameSize) {
     if (sFileBuff == NULL || nFileSize == 0) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
@@ -271,7 +269,7 @@ int upload_appender(const char *sFileBuff, int64_t nFileSize, const char *sFileE
         return FSC_ERROR_CODE_INIT_FAILED;
 
     return g_pClient->upload_appender(sFileBuff, nFileSize, sFileExtName,
-            pRemoteFilename, nNameSize);
+            pRemoteFileID, nNameSize);
 }
 
 int append_file(const char *sFileBuff, const int64_t nFileSize, const char *sAppenderFileID) {
@@ -282,41 +280,40 @@ int append_file(const char *sFileBuff, const int64_t nFileSize, const char *sApp
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
-    return g_pClient->append_file(sFileBuff, nFileSize,sAppenderFileID);
+    return g_pClient->append_file(sFileBuff, nFileSize, sAppenderFileID);
 }
 
-int download_file(const char *sGroupName, const char *sReomteFilename,
-        BufferInfo *pBuff) {
-    if (sGroupName == NULL || sReomteFilename == NULL) {
+int download_file(const char *sReomteFileID, BufferInfo *pBuff) {
+    if (sReomteFileID == NULL) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
 
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
-    return g_pClient->download_file(sGroupName, sReomteFilename, pBuff);
+    return g_pClient->download_file(sReomteFileID, pBuff);
 }
 
-int delete_file(const char *sGroupName, const char *sReomteFilename) {
-    if (sGroupName == NULL || sReomteFilename == NULL) {
+int delete_file(const char *sReomteFileID) {
+    if (sReomteFileID == NULL) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
 
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
-    return g_pClient->delete_file(sGroupName, sReomteFilename);
+    return g_pClient->delete_file(sReomteFileID);
 }
 
-int get_file_info(const char *sFileID, BufferInfo *FileInfo) {
-    if (sFileID == NULL) {
+int get_file_info(const char *sReomteFileID, BufferInfo *FileInfo) {
+    if (sReomteFileID == NULL) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
 
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
-    return g_pClient->get_file_info(sFileID, FileInfo);
+    return g_pClient->get_file_info(sReomteFileID, FileInfo);
 }
 
 int list_groups(BufferInfo *GroupsInfo) {
