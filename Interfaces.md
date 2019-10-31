@@ -103,7 +103,7 @@ f.close()	# pipe_r is closed also.
 |        | `upload_slave`               |              |                     |
 | ------ | ---------------------------- | ------------ | ------------------- |
 | IN     | file_buff                    | `bytes`      | 从文件的二进制内容  |
-|        | master_filename              | `str`        | 主文件的文件名      |
+|        | master_file_id               | `str`        | 主文件的文件名      |
 |        | prefix_name                  | `str`        | 从文件的前缀名      |
 |        | file_ext_name                | `str`        | 从文件的扩展名      |
 | RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败 |
@@ -111,6 +111,8 @@ f.close()	# pipe_r is closed also.
 上传主从文件中的**从文件**。
 
 一般来说，前缀名以下划线`_`开头。
+
+`master_file_id`形如：`group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png`
 
 ## 05. `upload_appender(bytes, str)`
 
@@ -129,12 +131,12 @@ f.close()	# pipe_r is closed also.
 |        | `upload_appender` |         |                                  |
 | ------ | ----------------- | ------- | -------------------------------- |
 | IN     | file_buff         | `bytes` | 上传文件的二进制内容             |
-|        | appender_filename | `str`   | 要追加上传的追加类型文件的文件名 |
+|        | appender_file_id  | `str`   | 要追加上传的追加类型文件的文件ID |
 | RETURN | response          | `int`   | `0`为成功，否则失败              |
 
 向**追加类型**的文件追加上传文件。
 
-注意：`appender_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz1234.png`。
+注意：`appender_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz1234.png`。
 
 ## 07. `download_file(str, str)`
 

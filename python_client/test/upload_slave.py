@@ -31,12 +31,13 @@ print()
 print('Upload slave file:')
 
 # send slave pic
-master_filename = r[1][r[1].find('/') + 1:]
-prefix_name = '_800x1280'
+master_file_id = r[1]
+prefix_name = '_1280x800'
+file_ext_name = 'jpg'
 
 start = time.perf_counter()
 
-r = fdfs.upload_slave(file_buff, master_filename, prefix_name, 'jpg')
+r = fdfs.upload_slave(file_buff, master_file_id, prefix_name, file_ext_name)
 
 elapsed = time.perf_counter() - start
 

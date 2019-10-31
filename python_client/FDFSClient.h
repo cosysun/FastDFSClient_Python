@@ -18,16 +18,16 @@ public:
 
     // slave文件上传
     int upload_slave(const char *file_buff, int64_t file_size,
-            const char *master_filename, const char *prefix_name, const char *file_ext_name,
-            char *&remote_file_name, int &name_size);
+            const char *master_file_id, const char *prefix_name, const char *file_ext_name,
+            char *&remote_file_id, int &name_size);
 
     // 上传追加类型文件
     int upload_appender(const char *file_buff, int64_t file_size, const char *file_ext_name,
             char *&remote_file_name, int &name_size);
 
     // 向追加类型文件追加上传
-    int append_file(const char *file_buff, int64_t file_size,
-            const char *appender_filename);
+    int append_file(const char *file_buff, const int64_t file_size,
+            const char *appender_file_id);
 
     // 下载文件
     int download_file(const char *group_name, const char *remote_filename,

@@ -88,13 +88,13 @@ static PyObject *wrap_upload_appender(PyObject *self, PyObject *args) {
 
 static PyObject *wrap_append_file(PyObject *self, PyObject *args) {
     const char *sFileBuff;
-    const char *sAppenderFilename;
+    const char *sAppenderFileID;
     Py_ssize_t nFileSize = 0;
 
-    if (!PyArg_ParseTuple(args, "s#s", &sFileBuff, &nFileSize, &sAppenderFilename))
+    if (!PyArg_ParseTuple(args, "s#s", &sFileBuff, &nFileSize, &sAppenderFileID))
         return NULL;
 
-    int res = append_file(sFileBuff, nFileSize, sAppenderFilename);
+    int res = append_file(sFileBuff, nFileSize, sAppenderFileID);
 
     return Py_BuildValue("i", res);
 }
@@ -274,8 +274,7 @@ int upload_appender(const char *sFileBuff, int64_t nFileSize, const char *sFileE
             pRemoteFilename, nNameSize);
 }
 
-int append_file(const char *sFileBuff, int64_t nFileSize,
-        const char *sAppenderFilename) {
+int append_file(const char *sFileBuff, const int64_t nFileSize, const char *sAppenderFileID) {
     if (sFileBuff == NULL || nFileSize == 0) {
         return FSC_ERROR_CODE_PARAM_INVAILD;
     }
@@ -283,7 +282,7 @@ int append_file(const char *sFileBuff, int64_t nFileSize,
     if (g_pClient == NULL)
         return FSC_ERROR_CODE_INIT_FAILED;
 
-    return g_pClient->append_file(sFileBuff, nFileSize, sAppenderFilename);
+    return g_pClient->append_file(sFileBuff, nFileSize,sAppenderFileID);
 }
 
 int download_file(const char *sGroupName, const char *sReomteFilename,

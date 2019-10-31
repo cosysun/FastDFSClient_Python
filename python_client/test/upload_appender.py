@@ -27,11 +27,11 @@ if r[0] != 0:
 print()
 print('Append file:')
 
-appender_filename = r[1][r[1].find('/') + 1:]
+appender_file_id = r[1]
 
 start = time.perf_counter()
 
-r = fdfs.append_file(file_buff, appender_filename)
+r = fdfs.append_file(file_buff, appender_file_id)
 
 elapsed = time.perf_counter() - start
 

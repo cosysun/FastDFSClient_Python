@@ -1,6 +1,6 @@
 # FastDFS Client for Python
 
-Server 版本：**5.12**
+Server 版本：**6.01**
 
 ### How to Compile
 
@@ -15,22 +15,30 @@ Server 版本：**5.12**
 一种可能的编译步骤：
 
 ```bash
-sudo apt install git make gcc-4.8 -y
+readonly LIBFASTCOMMON_VERSION=1.0.41
+readonly FASTDFS_VERSION=6.01
+
+readonly LIBFASTCOMMON_DIR_NAME="libfastcommon-${LIBFASTCOMMON_VERSION}"
+readonly FASTDFS_DIR_NAME="fastdfs-${FASTDFS_VERSION}"
+readonly FASTDFS_CLIENT_DIR_NAME="FastDFSClient_Python"
+
+## install requirements programmes
+sudo apt install wget tar make gcc-4.8 -y
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40
 sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 40
 
 # install libfastcommon
 cd /usr/local/src/
-sudo wget https://github.com/happyfish100/libfastcommon/archive/V1.0.40.tar.gz
-sudo tar xf V1.0.40.tar.gz
-cd libfastcommon-1.0.40/
+sudo wget "https://github.com/happyfish100/libfastcommon/archive/V${LIBFASTCOMMON_VERSION}.tar.gz"
+sudo tar xf "V${LIBFASTCOMMON_VERSION}.tar.gz"
+cd "${LIBFASTCOMMON_DIR_NAME}"
 sudo ./make.sh && sudo ./make.sh install
 
 # install fastdfs
 cd ../
-sudo wget https://github.com/happyfish100/fastdfs/archive/V5.12.tar.gz
-sudo tar xf V5.12.tar.gz
-cd fastdfs-5.12/
+sudo wget "https://github.com/happyfish100/fastdfs/archive/V${FASTDFS_VERSION}.tar.gz"
+sudo tar xf "V${FASTDFS_VERSION}.tar.gz"
+cd "${FASTDFS_DIR_NAME}"
 sudo ./make.sh && sudo ./make.sh install
 
 # install FastDFS Python Client
@@ -46,6 +54,9 @@ sudo make install
 详细说明请看：[《FastDFS客户端(Python版)指南》](https://blog.csdn.net/lenyusun/article/details/44057139) 或[《接口说明文档》](./Interfaces.md)。
 
 ### Revision History
+
+* 2019.10.31 ver 4.0.0
+  * 适配了`fastdfs 6.01`版本
 
 - 2019.9.18 ver 3.1.0
   - 增加了`get_file_info`接口

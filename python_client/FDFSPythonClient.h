@@ -104,13 +104,12 @@ extern "C" {
     //功能：向追加类型的文件追加上传文件
     //参数：
     //      const char *sFileBuff           IN 文件内容
-    //      int64_t nFileSize               IN 文件大小
-    //      const char *sAppenderFilename   IN 要追加上传的追加类型的文件名
-    //          比如：M00/00/00/fwAAAV0VrVWEW6E8AAAAAKDElgs642.ext
+    //      const int64_t nFileSize         IN 文件大小
+    //      const char *sAppenderFileID     IN 要追加上传的追加类型文件ID
+    //          比如：group1/M00/00/00/fwAAAV0VrVWEW6E8AAAAAKDElgs642.ext
     //返回：0:成功 否则失败。
     //////////////////////////////////////////////////////////////////////////
-    int append_file(const char *sFileBuff, int64_t nFileSize,
-            const char *sAppenderFilename);
+    int append_file(const char *sFileBuff, const int64_t nFileSize, const char *sAppenderFileID);
 
     //////////////////////////////////////////////////////////////////////////
     //功能：下载文件
