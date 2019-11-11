@@ -1,3 +1,9 @@
+---
+date: 2019-11-11
+---
+
+
+
 # Interfaces Documentation
 
 [TOC]
@@ -90,88 +96,88 @@ f.close()	# pipe_r is closed also.
 
 ## 03. `upload_file(bytes, str)`
 
-|        | `upload_file`                |              |                      |
-| ------ | ---------------------------- | ------------ | -------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容 |
-|        | file_ext_name                | `str`        | 上传文件的扩展名     |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败  |
+|        | `upload_file`                |              |                             |
+| ------ | ---------------------------- | ------------ | --------------------------- |
+| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
+|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
 
 上传**普通类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png')`。
 
 ## 04. `upload_slave(bytes, str, str, str)`
 
-|        | `upload_slave`               |              |                     |
-| ------ | ---------------------------- | ------------ | ------------------- |
-| IN     | file_buff                    | `bytes`      | 从文件的二进制内容  |
-|        | master_filename              | `str`        | 主文件的文件名      |
-|        | prefix_name                  | `str`        | 从文件的前缀名      |
-|        | file_ext_name                | `str`        | 从文件的扩展名      |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败 |
+|        | `upload_slave`               |              |                           |
+| ------ | ---------------------------- | ------------ | ------------------------- |
+| IN     | file_buff                    | `bytes`      | 从文件的二进制内容        |
+|        | master_file_id               | `str`        | 主文件的文件名            |
+|        | prefix_name                  | `str`        | 从文件的前缀名            |
+|        | file_ext_name                | `str`        | 从文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败       |
 
 上传主从文件中的**从文件**。
 
 一般来说，前缀名以下划线`_`开头。
 
+`master_file_id`形如：`group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png`
+
 ## 05. `upload_appender(bytes, str)`
 
-|        | `upload_appender`            |              |                      |
-| ------ | ---------------------------- | ------------ | -------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容 |
-|        | file_ext_name                | `str`        | 上传文件的扩展名     |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败  |
+|        | `upload_appender`            |              |                             |
+| ------ | ---------------------------- | ------------ | --------------------------- |
+| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
+|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
 
 上传**追加类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ7890.png')`。
 
-除接口名不同外，其他皆与`upload_file`一样。
+`appender`类型文件可以对其进行`append`、`modify`和`truncate`操作。
 
 ## 06. `append_file(bytes, str)`
 
 |        | `upload_appender` |         |                                  |
 | ------ | ----------------- | ------- | -------------------------------- |
 | IN     | file_buff         | `bytes` | 上传文件的二进制内容             |
-|        | appender_filename | `str`   | 要追加上传的追加类型文件的文件名 |
+|        | appender_file_id  | `str`   | 要追加上传的追加类型文件的文件ID |
 | RETURN | response          | `int`   | `0`为成功，否则失败              |
 
 向**追加类型**的文件追加上传文件。
 
-注意：`appender_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz1234.png`。
+注意：`appender_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz1234.png`。
 
-## 07. `download_file(str, str)`
+## 07. `download_file(str)`
 
 |        | `download_file`       |                |                     |
 | ------ | --------------------- | -------------- | ------------------- |
-| IN     | group_name            | `str`          | 下载文件的存储组名  |
-|        | remote_filename       | `str`          | 下载文件的存储名    |
+| IN     | remote_file_id        | `str`          | 下载文件的存储名    |
 | RETURN | (response, file_buff) | `(int, bytes)` | `0`为成功，否则失败 |
 
 下载文件。
 
-注意：`remote_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz1234.jpg`。
+注意：`remote_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz1234.jpg`。
 
-## 08. `delete_file(str, str)`
+## 08. `delete_file(str)`
 
-|        | `delete_file`   |       |                     |
-| ------ | --------------- | ----- | ------------------- |
-| IN     | group_name      | `str` | 删除文件的存储组名  |
-|        | remote_filename | `str` | 删除文件的存储名    |
-| RETURN | response        | `int` | `0`为成功，否则失败 |
+|        | `delete_file`  |       |                     |
+| ------ | -------------- | ----- | ------------------- |
+| IN     | remote_file_id | `str` | 删除文件的存储名    |
+| RETURN | response       | `int` | `0`为成功，否则失败 |
 
 删除文件。
 
-注意：`remote_filename`形如`M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
+注意：`remote_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
 
 ## 09. `get_file_info(str)`
 
 |        | `get_file_info`       |              |                     |
 | ------ | --------------------- | ------------ | ------------------- |
-| IN     | file_id               | `str`        | 文件名              |
+| IN     | remote_file_id        | `str`        | 文件名              |
 | RETURN | (response, file_info) | `(int, str)` | `0`为成功，否则失败 |
 
 获取文件信息。
 
 注意：
 
-1. `file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
+1. `remote_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
 2. 对于`appender`类型文件来说，其获取的`crc32`值不准确。
 
 ## 10. `list_groups()`
@@ -203,9 +209,11 @@ list one group.
 
 list all servers of the specified group.
 
-注意：`group_name`形如`group1`，`storage_id`可以为空字符串。`storage_id`形式定义于`storage_ids.conf`文件，在`tracker.conf`的`use_storage_id`参数设置是否启用，默认为`ip`形式。
+注意：`group_name`形如`group1`，`storage_id`可以为空字符串。`storage_id`形式定义于`storage_ids.conf`文件，在`tracker.conf`的`use_storage_id`参数设置是否启用，默认为`id`形式。
 
 ---
 
 *注意：只有`init`接口支持关键字参数*
+
+**具体使用请参考`test`目录下脚本文件。**
 

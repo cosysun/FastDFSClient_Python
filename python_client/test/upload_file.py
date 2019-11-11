@@ -10,9 +10,11 @@ if r != 0:
 with open('test.jpg', 'rb') as f:
     file_buff = f.read()
 
+file_ext_name = 'jpg'
+
 start = time.perf_counter()
 
-r = fdfs.upload_file(file_buff, 'jpg')
+r = fdfs.upload_file(file_buff, file_ext_name)
 
 elapsed = time.perf_counter() - start
 

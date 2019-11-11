@@ -27,12 +27,11 @@ if r[0] != 0:
 print()
 print('Download file:')
 
-group_name = r[1].split('/')[0]
-remote_filename = r[1][r[1].find('/') + 1:]
+remote_file_id = r[1]
 
 start = time.perf_counter()
 
-r = fdfs.download_file(group_name, remote_filename)
+r = fdfs.download_file(remote_file_id)
 
 elapsed = time.perf_counter() - start
 
@@ -42,5 +41,5 @@ print('Time Elapsed %f ms.' % (elapsed * 1000))
 fdfs.destroy()
 
 if r[0] == 0:
-    with open(remote_filename.rsplit('/')[-1], 'wb') as f:
+    with open(remote_file_id.rsplit('/')[-1], 'wb') as f:
         f.write(r[1])

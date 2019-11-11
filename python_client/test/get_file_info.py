@@ -27,9 +27,11 @@ if n[0] != 0:
 print()
 print('Get file info:')
 
+remote_file_id = n[1]
+
 start = time.perf_counter()
 
-r = fdfs.get_file_info(n[1])
+r = fdfs.get_file_info(remote_file_id)
 
 elapsed = time.perf_counter() - start
 
@@ -42,4 +44,3 @@ if r[0] != 0:
 print(r[1])
 
 fdfs.destroy()
-
