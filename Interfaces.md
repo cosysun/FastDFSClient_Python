@@ -1,3 +1,9 @@
+---
+- date: 2019-11-11
+---
+
+
+
 # Interfaces Documentation
 
 [TOC]
@@ -90,23 +96,23 @@ f.close()	# pipe_r is closed also.
 
 ## 03. `upload_file(bytes, str)`
 
-|        | `upload_file`                |              |                      |
-| ------ | ---------------------------- | ------------ | -------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容 |
-|        | file_ext_name                | `str`        | 上传文件的扩展名     |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败  |
+|        | `upload_file`                |              |                             |
+| ------ | ---------------------------- | ------------ | --------------------------- |
+| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
+|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
 
 上传**普通类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png')`。
 
 ## 04. `upload_slave(bytes, str, str, str)`
 
-|        | `upload_slave`               |              |                     |
-| ------ | ---------------------------- | ------------ | ------------------- |
-| IN     | file_buff                    | `bytes`      | 从文件的二进制内容  |
-|        | master_file_id               | `str`        | 主文件的文件名      |
-|        | prefix_name                  | `str`        | 从文件的前缀名      |
-|        | file_ext_name                | `str`        | 从文件的扩展名      |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败 |
+|        | `upload_slave`               |              |                           |
+| ------ | ---------------------------- | ------------ | ------------------------- |
+| IN     | file_buff                    | `bytes`      | 从文件的二进制内容        |
+|        | master_file_id               | `str`        | 主文件的文件名            |
+|        | prefix_name                  | `str`        | 从文件的前缀名            |
+|        | file_ext_name                | `str`        | 从文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败       |
 
 上传主从文件中的**从文件**。
 
@@ -116,11 +122,11 @@ f.close()	# pipe_r is closed also.
 
 ## 05. `upload_appender(bytes, str)`
 
-|        | `upload_appender`            |              |                      |
-| ------ | ---------------------------- | ------------ | -------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容 |
-|        | file_ext_name                | `str`        | 上传文件的扩展名     |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败  |
+|        | `upload_appender`            |              |                             |
+| ------ | ---------------------------- | ------------ | --------------------------- |
+| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
+|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
+| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
 
 上传**追加类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ7890.png')`。
 
@@ -203,7 +209,7 @@ list one group.
 
 list all servers of the specified group.
 
-注意：`group_name`形如`group1`，`storage_id`可以为空字符串。`storage_id`形式定义于`storage_ids.conf`文件，在`tracker.conf`的`use_storage_id`参数设置是否启用，默认为`ip`形式。
+注意：`group_name`形如`group1`，`storage_id`可以为空字符串。`storage_id`形式定义于`storage_ids.conf`文件，在`tracker.conf`的`use_storage_id`参数设置是否启用，默认为`id`形式。
 
 ---
 

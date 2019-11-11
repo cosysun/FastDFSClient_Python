@@ -44,4 +44,3 @@ if r[0] != 0:
 print(r[1])
 
 fdfs.destroy()
-

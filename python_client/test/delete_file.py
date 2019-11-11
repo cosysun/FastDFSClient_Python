@@ -1,21 +1,6 @@
-#from ctypes import *
 import FDFSPythonClient as fdfs
 import time
 import sys
-# import os
-#libtest = cdll.LoadLibrary(os.getcwd() + '/python_test.so')
-# sys.path.append(os.getcwd())
-# oprint libtest.fdfs_download('/etc/fdfs/client.conf', 'group2/M00/00/00/CgEIzVRJ-GGAfXv9AAkVVGMybN88065291', '~/test.jpg')
-#tt = c_char_p*1
-#res = (c_char_p)("gggg")
-#res = create_string_buffer("ggggggg")
-#g = libtest.test("gg");
-# print ctyeps.sting_at(g)
-# res = ""
-#r = fdfs.MyTest("ls -l", res)
-# o = fdfs.fdfs_init("/etc/fdfs/client.conf", 7)
-
-#obj_handle = o
 
 r = fdfs.init('/etc/fdfs/client.conf', log_level=7, log_fd=sys.stderr.fileno())
 

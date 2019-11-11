@@ -23,7 +23,6 @@ elapsed = time.perf_counter() - start
 print('Response:', r)
 print('Time Elapsed %f ms.' % (elapsed * 1000))
 
-
 if r[0] != 0:
     exit()
 
